@@ -21,7 +21,9 @@ export default function App() {
         <Route path="otp" element={<OtpPage />} />
       </Route>
       <Route path="/result/:paymentId" element={<ResultPage />} />
-      <Route path="/test" element={<TestPage />} />
+      {(import.meta.env.DEV || import.meta.env.VITE_ENABLE_TEST_PAGE === 'true') && (
+        <Route path="/test" element={<TestPage />} />
+      )}
       <Route path="/mockpay/result/:paymentId" element={<ResultPage />} />
       <Route path="/" element={<NotFoundPage />} />
       <Route path="*" element={<NotFoundPage />} />
