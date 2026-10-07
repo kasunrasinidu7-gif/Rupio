@@ -25,7 +25,7 @@ frontend/
 ## Local setup
 
 1. Use an existing Firebase project or create a dedicated Rupio project, then enable Cloud Firestore.
-2. For local development, create a Firebase service-account key and keep its JSON file outside this repository. When deployed on Google Cloud Run, attach a service account to the service instead of uploading a JSON key.
+2. For local development, create a Firebase service-account key and keep its JSON file outside this repository. For Render, upload it as a service Secret File as described below.
 3. Copy `backend/.env.example` to `backend/.env`. Set `FIREBASE_PROJECT_ID`, the local-only `GOOGLE_APPLICATION_CREDENTIALS` path, `RUPIO_API_KEY`, and `RUPIO_CALLBACK_SECRET`.
 4. Rupio issues the integration API key. Generate a long random value locally, keep it in Rupio's backend configuration, and give the same value securely to the integrating application's backend. That backend sends it in the `X-API-Key` header. The key must never be put in a browser or mobile app.
 5. Generate a different random value for `RUPIO_CALLBACK_SECRET`. Configure that same secret in the integrating backend so it can verify Rupio's signed callbacks.
@@ -42,7 +42,15 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 For the prototype there is one Rupio integration API key. Before onboarding unrelated external clients in production, issue separate revocable keys per integration and add rate limits and key rotation.
 
-For a hosted deployment, build the frontend with `npm run build` in `frontend`, then deploy the backend. Express serves the built checkout UI. Set `RUPIO_PUBLIC_URL` to the public HTTPS origin and `FRONTEND_ORIGIN` to the frontend's public origin. Store secrets using the hosting provider's secret manager. On Cloud Run, use its attached service identity for Firestore and omit `GOOGLE_APPLICATION_CREDENTIALS`.
+## Hosting (Vercel frontend + Render backend)
+
+1. Import this GitHub repository into Vercel. Set **Root Directory** to `frontend`, build command to `npm run build`, and output directory to `dist`. The Vercel rewrite config keeps checkout links working on refresh.
+2. After Vercel gives you the frontend URL, create a Render Blueprint from the repository's root `render.yaml`. Enter that Vercel origin for both `RUPIO_PUBLIC_URL` and `FRONTEND_ORIGIN`, and enter the Firebase project ID when prompted.
+3. In Render's Environment settings, upload a Secret File named `rupio-service-account.json` containing the Firebase service-account JSON. The Blueprint points `GOOGLE_APPLICATION_CREDENTIALS` to it. Never commit this JSON.
+4. Copy the Render service URL into Vercel's `VITE_RUPIO_API_URL` setting (origin only, no `/api/v1` suffix), then redeploy Vercel.
+5. Copy Render's generated `RUPIO_API_KEY` into the integrating app's backend secrets. Keep it out of Vercel/browser code. Render also generates `RUPIO_CALLBACK_SECRET`; share it with the integrating backend for callback verification.
+
+The Blueprint uses Render's Singapore region, the closest Render region for this Sri Lanka/Mumbai setup. Its free plan is for testing: Render spins it down after 15 idle minutes and waking can take about a minute. Choose a paid plan for production availability. The `/test` page and test-session API are disabled in production by default.
 
 ## Integration API
 

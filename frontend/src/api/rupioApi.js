@@ -1,5 +1,12 @@
+const configuredApiOrigin = (import.meta.env.VITE_RUPIO_API_URL || '').replace(/\/+$/, '');
+const apiBase = configuredApiOrigin ? configuredApiOrigin + '/api/v1' : '/api/v1';
+
 async function request(path, options = {}) {
-  const response = await fetch('/api/v1' + path, {
+  if (import.meta.env.PROD && !configuredApiOrigin) {
+    throw new Error('Rupio API URL is not configured for this deployment.');
+  }
+
+  const response = await fetch(apiBase + path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

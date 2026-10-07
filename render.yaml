@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: rupio-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: GOOGLE_APPLICATION_CREDENTIALS
+        value: /etc/secrets/rupio-service-account.json
+      - key: RUPIO_API_KEY
+        generateValue: true
+      - key: RUPIO_CALLBACK_SECRET
+        generateValue: true
+      - key: RUPIO_PUBLIC_URL
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: SESSION_TTL_SECONDS
+        value: "480"
