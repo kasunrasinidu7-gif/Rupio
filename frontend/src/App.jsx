@@ -3,6 +3,7 @@ import CheckoutLayout from './components/CheckoutLayout.jsx';
 import AmountPage from './pages/AmountPage.jsx';
 import CardPage from './pages/CardPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import OtpPage from './pages/OtpPage.jsx';
 import ResultPage from './pages/ResultPage.jsx';
 import TestPage from './pages/TestPage.jsx';
 
@@ -12,10 +13,12 @@ export default function App() {
       <Route path="/checkout/:sessionId" element={<CheckoutLayout />}>
         <Route index element={<AmountPage />} />
         <Route path="card" element={<CardPage />} />
+        <Route path="otp" element={<OtpPage />} />
       </Route>
       <Route path="/mockpay/checkout/:sessionId" element={<CheckoutLayout />}>
         <Route index element={<AmountPage />} />
         <Route path="card" element={<CardPage />} />
+        <Route path="otp" element={<OtpPage />} />
       </Route>
       <Route path="/result/:paymentId" element={<ResultPage />} />
       <Route path="/test" element={<TestPage />} />

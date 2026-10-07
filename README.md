@@ -65,7 +65,7 @@ Content-Type: application/json
 }
 ~~~
 
-The response contains `sessionId`, `checkoutUrl`, and `expiresAt`. Redirect the customer to the returned `checkoutUrl`; it contains the real session ID. The customer can edit the amount before entering demo-card details. Sessions expire after two minutes by default.
+The response contains `sessionId`, `checkoutUrl`, and `expiresAt`. Redirect the customer to the returned `checkoutUrl`; it contains the real session ID. The amount, card, and OTP pages each have a two-minute timer. The overall backend session defaults to eight minutes to allow time to move between steps.
 
 Rupio sends a signed server-to-server callback to the supplied `callbackUrl`. The JSON body includes `eventId`, `sessionId`, `paymentId`, `merchantReference`, `requestedAmount`, `amount`, `status`, `currency`, `message`, and `occurredAt`. Status is `SUCCESS`, `FAILED`, `CANCELLED`, or `TIMEOUT`. The `X-Rupio-Signature` header is `sha256=<hex HMAC-SHA256 of the exact JSON body>`; `X-Rupio-Event-Id` is an idempotency key. Verify the signature and process each event idempotently. Only the integrating application should update its own balance/order state, and only after validating a successful callback.
 
@@ -87,6 +87,8 @@ The former `/mockpay/api/...` and `/mockpay/checkout/...` paths remain as compat
 - `4242 4242 4242 4242` — success
 - `4000 0000 0000 0002` — declined
 - `4000 0000 0000 0003` — simulated timeout
+
+The simulated OTP is `0000`.
 
 Use any future expiry date and a three- or four-digit CVV. Rupio accepts only these fake test numbers and does not save card numbers, expiry dates, or CVVs. This is not a real payment processor.
 

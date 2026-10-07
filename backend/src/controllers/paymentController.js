@@ -77,15 +77,20 @@ export async function processPayment(request, response) {
   let result;
   if (Date.parse(session.expiresAt) <= Date.now()) {
     result = { status: 'TIMEOUT', message: 'The checkout session expired before payment was completed.' };
+  } else if (body.action === 'timeout') {
+    result = { status: 'TIMEOUT', amount: session.amount, message: 'The two-minute time limit for this checkout step expired.' };
   } else if (body.action === 'cancel') {
     result = { status: 'CANCELLED', amount: session.amount, message: 'The customer cancelled the checkout.' };
   } else if (body.action === 'pay') {
+    if (String(body.otp || '') !== '0000') {
+      throw httpError(400, 'Incorrect test OTP. Enter 0000 to confirm.');
+    }
     result = {
       ...cardOutcome(body.cardNumber, body.expiry, body.cvv),
       amount: parseAmount(body.amount)
     };
   } else {
-    throw httpError(400, 'action must be pay or cancel.');
+    throw httpError(400, 'action must be pay, cancel, or timeout.');
   }
 
   const completed = await completeAndNotify(session, result);

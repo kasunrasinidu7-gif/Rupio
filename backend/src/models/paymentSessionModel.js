@@ -32,7 +32,7 @@ function serializePayment(data) {
 export async function createSession(input) {
   const sessionId = 'rupio_sess_' + randomUUID();
   const now = Timestamp.now();
-  const ttlSeconds = Number(process.env.SESSION_TTL_SECONDS) || 120;
+  const ttlSeconds = Number(process.env.SESSION_TTL_SECONDS) || 480;
   const expiresAt = Timestamp.fromMillis(now.toMillis() + Math.max(30, Math.min(ttlSeconds, 600)) * 1000);
   const session = {
     sessionId,

@@ -20,19 +20,20 @@ export default function CardPage() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  async function finish(action, event) {
-    event?.preventDefault();
+  function continueToOtp(event) {
+    event.preventDefault();
+    setBusy(true);
+    setError('');
+    navigate('/checkout/' + sessionId + '/otp', {
+      state: { cardDetails: { cardNumber, expiry, cvv } }
+    });
+  }
+
+  async function cancelCheckout() {
     setBusy(true);
     setError('');
     try {
-      const result = await processPayment({
-        sessionId,
-        action,
-        amount: session.amount,
-        cardNumber,
-        expiry,
-        cvv
-      });
+      const result = await processPayment({ sessionId, action: 'cancel' });
       navigate('/result/' + result.payment.paymentId);
     } catch (requestError) {
       setError(requestError.message);
@@ -65,12 +66,12 @@ export default function CardPage() {
         <div>
           <p className="eyebrow">Test card</p>
           <h1>Card details</h1>
-          <p className="muted">Use a demo card to choose the payment outcome.</p>
+          <p className="muted">Enter demo card details. OTP confirmation is next.</p>
         </div>
       </div>
       <AmountSummary amount={session.amount} currency={session.currency} reference={session.merchantReference} compact />
 
-      <form className="form-stack" onSubmit={(event) => finish('pay', event)}>
+      <form className="form-stack" onSubmit={continueToOtp}>
         <label className="field-label" htmlFor="card-number">Card number</label>
         <input
           className="text-input"
@@ -131,10 +132,10 @@ export default function CardPage() {
 
         {error && <p className="form-error" role="alert">{error}</p>}
         <PrimaryButton type="submit" disabled={busy || session.status !== 'PENDING'}>
-          {busy ? 'Processing…' : 'Pay ' + session.currency + ' ' + Number(session.amount).toFixed(2)}
+          {busy ? 'Please wait…' : 'Continue to OTP'}
           <span aria-hidden="true">→</span>
         </PrimaryButton>
-        <button className="cancel-button" type="button" onClick={(event) => finish('cancel', event)} disabled={busy}>
+        <button className="cancel-button" type="button" onClick={cancelCheckout} disabled={busy}>
           Cancel payment
         </button>
       </form>
