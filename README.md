@@ -103,6 +103,12 @@ The former `/mockpay/api/...` and `/mockpay/checkout/...` paths remain as compat
 
 ## Simulated card outcomes
 
+## Verification
+
+Run the automated backend checks with `cd backend` then `npm test`. They cover whole-rupee validation, supported URLs/currencies, staging-only test access, fake-card outcomes, the `000000` OTP, and callback-signature verification. Check the frontend compiles with `cd frontend` then `npm run build`.
+
+For a live staging smoke test, open `<staging-frontend-url>/test`, start a checkout, and complete one success using card `4242 4242 4242 4242` and OTP `000000`. Confirm the session and payment records appear in the development Firestore project. Repeat with `4000 0000 0000 0002` (decline) and `4000 0000 0000 0003` (simulated timeout). Then verify the browser's Network panel shows successful requests to the staging Render API and that production does not expose the test page. These live checks are separate from `npm test` and require the staging services and Firebase configuration.
+
 - `4242 4242 4242 4242` — success
 - `4000 0000 0000 0002` — declined
 - `4000 0000 0000 0003` — simulated timeout
