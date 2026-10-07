@@ -32,7 +32,7 @@ frontend/
 6. In `backend`, run `npm install` and `npm run dev`. In a second terminal, in `frontend`, run `npm install` and `npm run dev`.
 7. A checkout is only available from a session-specific link returned by `POST /api/v1/sessions`; opening the site root or typing an example `<sessionId>` does not create a session.
 
-For local testing, add `RUPIO_TEST_PAGE_ENABLED=true` to `backend/.env`, restart the backend, and open `http://localhost:5173/test`. Click **Start test checkout** to go through the amount, test-card, and result pages. Rupio uses a local callback receiver for this test flow. Do not enable the test page in production.
+For local testing, add `RUPIO_TEST_PAGE_ENABLED=true` to `backend/.env`, restart the backend, and open `http://localhost:5173/test`. Click **Start test checkout** to go through the amount, test-card, and result pages. Rupio uses a local callback receiver for this test flow. In production, test routes are available only when both `RUPIO_ENVIRONMENT=staging` and `RUPIO_TEST_PAGE_ENABLED=true` are set on a separate staging service.
 
 Generate a random value in PowerShell with Node.js (run once for each secret):
 
@@ -51,6 +51,17 @@ For the prototype there is one Rupio integration API key. Before onboarding unre
 5. Copy Render's generated `RUPIO_API_KEY` into the integrating app's backend secrets. Keep it out of Vercel/browser code. Render also generates `RUPIO_CALLBACK_SECRET`; share it with the integrating backend for callback verification.
 
 The Blueprint uses Render's Singapore region, the closest Render region for this Sri Lanka/Mumbai setup. Its free plan is for testing: Render spins it down after 15 idle minutes and waking can take about a minute. Choose a paid plan for production availability. The `/test` page and test-session API are disabled in production by default.
+
+## Staging-only hosted test page
+
+Keep the public production deployment's test page disabled. To test the hosted flow online:
+
+1. Create a Vercel Preview deployment from a non-production branch. In Vercel Project Settings > Environment Variables, set `VITE_ENABLE_TEST_PAGE=true` and later `VITE_RUPIO_API_URL` for the **Preview** environment only. Use the Preview URL for the staging branch, not `rupio-six.vercel.app`.
+2. Create a separate Render Blueprint from this repository and set its Blueprint Path to `render.staging.yaml`. This creates `rupio-api-staging` without changing the production service.
+3. Set `FIREBASE_PROJECT_ID` to the development Firebase project, and set both `RUPIO_PUBLIC_URL` and `FRONTEND_ORIGIN` to the exact Vercel Preview origin (no trailing slash). Upload the Firebase service-account JSON as the secret file `rupio-service-account.json`.
+4. After Render creates the staging service, set Vercel Preview's `VITE_RUPIO_API_URL` to that service's origin (no `/api/v1` suffix), then redeploy the Preview deployment.
+
+The test-session endpoint is enabled only when `RUPIO_TEST_PAGE_ENABLED=true` and the backend's `RUPIO_ENVIRONMENT=staging`. It remains unavailable on the production backend. Staging uses the configured development Firestore project, so its test records are written there.
 
 ## Integration API
 

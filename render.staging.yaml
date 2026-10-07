@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: rupio-api
+    name: rupio-api-staging
     runtime: node
     plan: free
     region: singapore
@@ -12,9 +12,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: RUPIO_ENVIRONMENT
-        value: production
+        value: staging
       - key: RUPIO_TEST_PAGE_ENABLED
-        value: "false"
+        value: "true"
       - key: FIREBASE_PROJECT_ID
         sync: false
       - key: GOOGLE_APPLICATION_CREDENTIALS
