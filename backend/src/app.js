@@ -8,6 +8,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import sessionRoutes from './routes/sessionRoutes.js';
 import testSessionRoutes from './routes/testSessionRoutes.js';
+import { isTestPageEnabled } from './middleware/testPageMiddleware.js';
 
 const app = express();
 const frontendDist = fileURLToPath(new URL('../../frontend/dist', import.meta.url));
@@ -29,7 +30,7 @@ if (fs.existsSync(frontendDist)) {
   app.use(express.static(frontendDist));
   const sendCheckoutApp = (request, response) => response.sendFile(path.join(frontendDist, 'index.html'));
   app.get('/checkout/:sessionId', sendCheckoutApp);
-  if (process.env.RUPIO_TEST_PAGE_ENABLED === 'true' && process.env.NODE_ENV !== 'production') {
+  if (isTestPageEnabled()) {
     app.get('/test', sendCheckoutApp);
   }
   app.get('/checkout/:sessionId/card', sendCheckoutApp);
