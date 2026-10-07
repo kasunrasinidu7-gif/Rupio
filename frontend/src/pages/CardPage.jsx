@@ -69,7 +69,7 @@ export default function CardPage() {
           <p className="muted">Enter demo card details. OTP confirmation is next.</p>
         </div>
       </div>
-      <AmountSummary amount={session.amount} currency={session.currency} reference={session.merchantReference} compact />
+      <AmountSummary amount={session.amount} currency={session.currency} reference={session.clientReference} compact />
 
       <form className="form-stack" onSubmit={continueToOtp}>
         <label className="field-label" htmlFor="card-number">Card number</label>

@@ -1,12 +1,12 @@
 import { createSession, findSession, finalizeSession, updateSessionAmount } from '../models/paymentSessionModel.js';
-import { sendMerchantCallback } from '../utils/callback.js';
+import { sendIntegrationCallback } from '../utils/callback.js';
 import { httpError } from '../utils/errors.js';
 import { parseAmount, parseCallbackUrl, parseCurrency, parseReturnUrl } from '../utils/validation.js';
 
 function publicSession(session) {
   return {
     sessionId: session.sessionId,
-    merchantReference: session.merchantReference,
+    clientReference: session.clientReference,
     requestedAmount: session.requestedAmount,
     amount: session.amount,
     currency: session.currency,
@@ -26,7 +26,7 @@ async function expireIfNeeded(session) {
     status: 'TIMEOUT',
     message: 'The checkout session expired before payment was completed.'
   });
-  if (result.created) await sendMerchantCallback(result.session, result.payment);
+  if (result.created) await sendIntegrationCallback(result.session, result.payment);
   return result.session;
 }
 
@@ -34,14 +34,14 @@ async function buildCheckoutSession(body) {
   if (!process.env.RUPIO_CALLBACK_SECRET) {
     throw httpError(503, 'Rupio callback signing is not configured.');
   }
-  const merchantReference = String(body.merchantReference || '').trim();
-  if (!merchantReference || merchantReference.length > 100) {
-    throw httpError(400, 'merchantReference is required and must be 100 characters or fewer.');
+  const clientReference = String(body.clientReference || '').trim();
+  if (!clientReference || clientReference.length > 100) {
+    throw httpError(400, 'clientReference is required and must be 100 characters or fewer.');
   }
   const currency = parseCurrency(body.currency);
 
   const session = await createSession({
-    merchantReference,
+    clientReference,
     customerReference: body.customerReference ? String(body.customerReference).slice(0, 120) : null,
     amount: parseAmount(body.amount, currency),
     currency,
@@ -88,7 +88,7 @@ export async function changeCheckoutAmount(request, response) {
       status: 'TIMEOUT',
       message: 'The checkout session expired before payment was completed.'
     });
-    if (result.created) await sendMerchantCallback(result.session, result.payment);
+    if (result.created) await sendIntegrationCallback(result.session, result.payment);
     return response.status(410).json({ error: 'This checkout session has expired.', session: publicSession(result.session) });
   }
   return response.json({ session: publicSession(updated.session) });

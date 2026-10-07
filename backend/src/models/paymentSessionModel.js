@@ -14,8 +14,11 @@ function asIso(value) {
 }
 
 function serializeSession(data) {
+  // Normalize older Firestore documents while exposing only the current API field.
+  const { merchantReference: oldReference, ...storedFields } = data;
   return {
-    ...data,
+    ...storedFields,
+    clientReference: data.clientReference ?? oldReference ?? null,
     createdAt: asIso(data.createdAt),
     updatedAt: asIso(data.updatedAt),
     expiresAt: asIso(data.expiresAt),
@@ -26,7 +29,12 @@ function serializeSession(data) {
 }
 
 function serializePayment(data) {
-  return { ...data, createdAt: asIso(data.createdAt) };
+  const { merchantReference: oldReference, ...storedFields } = data;
+  return {
+    ...storedFields,
+    clientReference: data.clientReference ?? oldReference ?? null,
+    createdAt: asIso(data.createdAt)
+  };
 }
 
 export async function createSession(input) {
@@ -36,7 +44,7 @@ export async function createSession(input) {
   const expiresAt = Timestamp.fromMillis(now.toMillis() + Math.max(30, Math.min(ttlSeconds, 600)) * 1000);
   const session = {
     sessionId,
-    merchantReference: input.merchantReference,
+    clientReference: input.clientReference,
     customerReference: input.customerReference || null,
     requestedAmount: input.amount,
     amount: input.amount,
@@ -108,7 +116,7 @@ export async function finalizeSession(sessionId, requestedResult) {
     const payment = {
       paymentId,
       sessionId,
-      merchantReference: current.merchantReference,
+      clientReference: current.clientReference ?? current.merchantReference ?? null,
       requestedAmount: current.requestedAmount ?? current.amount,
       amount,
       currency: current.currency,

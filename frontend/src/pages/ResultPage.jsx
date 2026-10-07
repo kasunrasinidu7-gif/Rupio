@@ -29,7 +29,7 @@ export default function ResultPage() {
         <AmountSummary
           amount={payment.amount}
           currency={payment.currency}
-          reference={payment.merchantReference}
+          reference={payment.clientReference}
           compact
         />
         <div className="receipt-row"><span>Rupio reference</span><code>{payment.paymentId}</code></div>

@@ -75,18 +75,18 @@ Content-Type: application/json
 
 ~~~json
 {
-  "merchantReference": "ORDER_12345",
+  "clientReference": "ORDER_12345",
   "amount": 5000,
   "currency": "LKR",
-  "callbackUrl": "https://merchant.example/api/rupio/callback",
-  "returnUrl": "merchant-app://payment/result",
+  "callbackUrl": "https://your-app.example/api/rupio/callback",
+  "returnUrl": "yourapp://payment/result",
   "customerReference": "customer-reference"
 }
 ~~~
 
 The response contains `sessionId`, `checkoutUrl`, and `expiresAt`. Redirect the customer to the returned `checkoutUrl`; it contains the real session ID. The amount, card, and OTP pages each have a two-minute timer. The overall backend session defaults to eight minutes to allow time to move between steps.
 
-Rupio sends a signed server-to-server callback to the supplied `callbackUrl`. The JSON body includes `eventId`, `sessionId`, `paymentId`, `merchantReference`, `requestedAmount`, `amount`, `status`, `currency`, `message`, and `occurredAt`. Status is `SUCCESS`, `FAILED`, `CANCELLED`, or `TIMEOUT`. The `X-Rupio-Signature` header is `sha256=<hex HMAC-SHA256 of the exact JSON body>`; `X-Rupio-Event-Id` is an idempotency key. Verify the signature and process each event idempotently. Only the integrating application should update its own balance/order state, and only after validating a successful callback.
+Rupio sends a signed server-to-server callback to the supplied `callbackUrl`. The JSON body includes `eventId`, `sessionId`, `paymentId`, `clientReference`, `requestedAmount`, `amount`, `status`, `currency`, `message`, and `occurredAt`. Status is `SUCCESS`, `FAILED`, `CANCELLED`, or `TIMEOUT`. The `X-Rupio-Signature` header is `sha256=<hex HMAC-SHA256 of the exact JSON body>`; `X-Rupio-Event-Id` is an idempotency key. Verify the signature and process each event idempotently. Only the integrating application should update its own balance/order state, and only after validating a successful callback.
 
 Useful endpoints:
 
@@ -102,6 +102,12 @@ GET   /health
 The former `/mockpay/api/...` and `/mockpay/checkout/...` paths remain as compatibility aliases during migration. New integrations should use the Rupio paths above.
 
 ## Simulated card outcomes
+
+## Verification
+
+Run the automated backend checks with `cd backend` then `npm test`. They cover whole-rupee validation, supported URLs/currencies, staging-only test access, fake-card outcomes, the `000000` OTP, and callback-signature verification. Check the frontend compiles with `cd frontend` then `npm run build`.
+
+For a live staging smoke test, open `<staging-frontend-url>/test`, start a checkout, and complete one success using card `4242 4242 4242 4242` and OTP `000000`. Confirm the session and payment records appear in the development Firestore project. Repeat with `4000 0000 0000 0002` (decline) and `4000 0000 0000 0003` (simulated timeout). Then verify the browser's Network panel shows successful requests to the staging Render API and that production does not expose the test page. These live checks are separate from `npm test` and require the staging services and Firebase configuration.
 
 - `4242 4242 4242 4242` — success
 - `4000 0000 0000 0002` — declined
