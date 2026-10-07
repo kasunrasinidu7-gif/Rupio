@@ -1,13 +1,18 @@
 import { httpError } from './errors.js';
 
-export function parseAmount(value) {
+export function parseAmount(value, currency = 'LKR') {
   const amount = Number(value);
   if (!Number.isFinite(amount) || amount <= 0 || amount > 1000000) {
     throw httpError(400, 'Enter an amount greater than zero and no more than 1,000,000.');
   }
 
-  const rounded = Math.round(amount * 100) / 100;
+  const fractionDigits = currency === 'LKR' ? 0 : 2;
+  const multiplier = 10 ** fractionDigits;
+  const rounded = Math.round(amount * multiplier) / multiplier;
   if (Math.abs(amount - rounded) > 0.000001) {
+    if (currency === 'LKR') {
+      throw httpError(400, 'LKR amounts must be whole rupees; cents are not accepted.');
+    }
     throw httpError(400, 'Amounts can have up to two decimal places.');
   }
   return rounded;

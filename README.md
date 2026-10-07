@@ -107,7 +107,9 @@ The former `/mockpay/api/...` and `/mockpay/checkout/...` paths remain as compat
 - `4000 0000 0000 0002` — declined
 - `4000 0000 0000 0003` — simulated timeout
 
-The simulated OTP is `0000`.
+The simulated OTP is `000000`.
+
+LKR checkout amounts use whole rupees only; decimal cents are rejected. Other supported currencies may use up to two decimal places.
 
 Use any future expiry date and a three- or four-digit CVV. Rupio accepts only these fake test numbers and does not save card numbers, expiry dates, or CVVs. This is not a real payment processor.
 
