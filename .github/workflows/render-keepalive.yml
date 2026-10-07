@@ -1,0 +1,32 @@
+name: Keep Render backend warm
+
+on:
+  schedule:
+    # Offset runs from the start of the hour to reduce scheduled-run delays.
+    - cron: '7,17,27,37,47,57 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Request the Render health endpoint
+        env:
+          RENDER_BACKEND_URL: ${{ vars.RENDER_BACKEND_URL }}
+        run: |
+          if [[ -z "$RENDER_BACKEND_URL" ]]; then
+            echo "Set the GitHub Actions variable RENDER_BACKEND_URL to the Render backend origin."
+            exit 1
+          fi
+
+          if [[ "$RENDER_BACKEND_URL" != https://* ]]; then
+            echo "RENDER_BACKEND_URL must start with https:// and contain only the service origin."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --connect-timeout 10 --max-time 20 \
+            "${RENDER_BACKEND_URL%/}/health"
