@@ -1,5 +1,5 @@
 import { findPayment, findSession, finalizeSession } from '../models/paymentSessionModel.js';
-import { sendMerchantCallback } from '../utils/callback.js';
+import { sendIntegrationCallback } from '../utils/callback.js';
 import { httpError } from '../utils/errors.js';
 import { getTestCardOutcome, isValidTestOtp } from '../utils/testPayment.js';
 import { parseAmount } from '../utils/validation.js';
@@ -8,7 +8,7 @@ function publicPayment(payment, session) {
   return {
     paymentId: payment.paymentId,
     sessionId: payment.sessionId,
-    merchantReference: payment.merchantReference,
+    clientReference: payment.clientReference,
     requestedAmount: payment.requestedAmount,
     amount: payment.amount,
     currency: payment.currency,
@@ -24,7 +24,7 @@ function publicPayment(payment, session) {
 async function completeAndNotify(session, result) {
   const finalized = await finalizeSession(session.sessionId, result);
   let callback = null;
-  if (finalized.created) callback = await sendMerchantCallback(finalized.session, finalized.payment);
+  if (finalized.created) callback = await sendIntegrationCallback(finalized.session, finalized.payment);
   const latestPayment = await findPayment(finalized.session.paymentId);
   return {
     payment: latestPayment || finalized.payment,

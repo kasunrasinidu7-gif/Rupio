@@ -75,18 +75,18 @@ Content-Type: application/json
 
 ~~~json
 {
-  "merchantReference": "ORDER_12345",
+  "clientReference": "ORDER_12345",
   "amount": 5000,
   "currency": "LKR",
-  "callbackUrl": "https://merchant.example/api/rupio/callback",
-  "returnUrl": "merchant-app://payment/result",
+  "callbackUrl": "https://your-app.example/api/rupio/callback",
+  "returnUrl": "yourapp://payment/result",
   "customerReference": "customer-reference"
 }
 ~~~
 
 The response contains `sessionId`, `checkoutUrl`, and `expiresAt`. Redirect the customer to the returned `checkoutUrl`; it contains the real session ID. The amount, card, and OTP pages each have a two-minute timer. The overall backend session defaults to eight minutes to allow time to move between steps.
 
-Rupio sends a signed server-to-server callback to the supplied `callbackUrl`. The JSON body includes `eventId`, `sessionId`, `paymentId`, `merchantReference`, `requestedAmount`, `amount`, `status`, `currency`, `message`, and `occurredAt`. Status is `SUCCESS`, `FAILED`, `CANCELLED`, or `TIMEOUT`. The `X-Rupio-Signature` header is `sha256=<hex HMAC-SHA256 of the exact JSON body>`; `X-Rupio-Event-Id` is an idempotency key. Verify the signature and process each event idempotently. Only the integrating application should update its own balance/order state, and only after validating a successful callback.
+Rupio sends a signed server-to-server callback to the supplied `callbackUrl`. The JSON body includes `eventId`, `sessionId`, `paymentId`, `clientReference`, `requestedAmount`, `amount`, `status`, `currency`, `message`, and `occurredAt`. Status is `SUCCESS`, `FAILED`, `CANCELLED`, or `TIMEOUT`. The `X-Rupio-Signature` header is `sha256=<hex HMAC-SHA256 of the exact JSON body>`; `X-Rupio-Event-Id` is an idempotency key. Verify the signature and process each event idempotently. Only the integrating application should update its own balance/order state, and only after validating a successful callback.
 
 Useful endpoints:
 

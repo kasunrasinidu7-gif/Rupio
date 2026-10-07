@@ -11,7 +11,7 @@ export default function TestPage() {
     setLoading(true);
     try {
       const session = await createTestSession({
-        merchantReference: 'RUPIO-TEST-' + Date.now(),
+        clientReference: 'RUPIO-TEST-' + Date.now(),
         amount: 100,
         currency: 'LKR',
         returnUrl: window.location.origin + '/test'

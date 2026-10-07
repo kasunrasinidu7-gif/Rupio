@@ -3,7 +3,7 @@ import { updateCallbackDelivery } from '../models/paymentSessionModel.js';
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-export async function sendMerchantCallback(session, payment) {
+export async function sendIntegrationCallback(session, payment) {
   const secret = process.env.RUPIO_CALLBACK_SECRET;
   if (!secret) return { status: 'FAILED', attempts: 0, message: 'Callback secret is not configured.' };
 
@@ -11,7 +11,7 @@ export async function sendMerchantCallback(session, payment) {
     eventId: payment.paymentId,
     sessionId: session.sessionId,
     paymentId: payment.paymentId,
-    merchantReference: session.merchantReference,
+    clientReference: session.clientReference,
     requestedAmount: session.requestedAmount,
     status: payment.status,
     amount: payment.amount,

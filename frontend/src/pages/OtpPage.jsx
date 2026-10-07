@@ -78,7 +78,7 @@ export default function OtpPage() {
           <p className="muted">Enter the test OTP <strong>000000</strong> to continue.</p>
         </div>
       </div>
-      <AmountSummary amount={session.amount} currency={session.currency} reference={session.merchantReference} compact />
+      <AmountSummary amount={session.amount} currency={session.currency} reference={session.clientReference} compact />
       <form className="form-stack" onSubmit={confirmOtp}>
         <label className="field-label" htmlFor="otp">One-time password</label>
         <input

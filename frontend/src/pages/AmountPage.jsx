@@ -82,7 +82,7 @@ export default function AmountPage() {
         </div>
       </div>
 
-      <AmountSummary amount={session.amount} currency={session.currency} reference={session.merchantReference} />
+      <AmountSummary amount={session.amount} currency={session.currency} reference={session.clientReference} />
 
       <form onSubmit={continueToCard} className="form-stack">
         <label className="field-label" htmlFor="amount">Amount in {session.currency}</label>
