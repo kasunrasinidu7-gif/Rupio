@@ -87,7 +87,7 @@ export async function processPayment(request, response) {
     }
     result = {
       ...cardOutcome(body.cardNumber, body.expiry, body.cvv),
-      amount: parseAmount(body.amount)
+      amount: parseAmount(body.amount, session.currency)
     };
   } else {
     throw httpError(400, 'action must be pay, cancel, or timeout.');

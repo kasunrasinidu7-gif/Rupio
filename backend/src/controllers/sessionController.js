@@ -38,12 +38,13 @@ async function buildCheckoutSession(body) {
   if (!merchantReference || merchantReference.length > 100) {
     throw httpError(400, 'merchantReference is required and must be 100 characters or fewer.');
   }
+  const currency = parseCurrency(body.currency);
 
   const session = await createSession({
     merchantReference,
     customerReference: body.customerReference ? String(body.customerReference).slice(0, 120) : null,
-    amount: parseAmount(body.amount),
-    currency: parseCurrency(body.currency),
+    amount: parseAmount(body.amount, currency),
+    currency,
     callbackUrl: parseCallbackUrl(body.callbackUrl),
     returnUrl: parseReturnUrl(body.returnUrl)
   });
@@ -78,7 +79,9 @@ export async function getCheckoutSession(request, response) {
 }
 
 export async function changeCheckoutAmount(request, response) {
-  const amount = parseAmount(request.body?.amount);
+  const currentSession = await findSession(request.params.sessionId);
+  if (!currentSession) throw httpError(404, 'Checkout session was not found.');
+  const amount = parseAmount(request.body?.amount, currentSession.currency);
   const updated = await updateSessionAmount(request.params.sessionId, amount);
   if (updated.expired) {
     const result = await finalizeSession(request.params.sessionId, {

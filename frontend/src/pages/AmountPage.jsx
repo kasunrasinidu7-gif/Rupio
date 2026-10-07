@@ -14,10 +14,14 @@ export default function AmountPage() {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const usesWholeUnits = session?.currency === 'LKR';
 
   useEffect(() => {
-    if (session) setAmount(String(session.amount));
-  }, [session?.sessionId, session?.amount]);
+    if (session) {
+      const initialAmount = usesWholeUnits ? Math.round(Number(session.amount)) : session.amount;
+      setAmount(String(initialAmount));
+    }
+  }, [session?.sessionId, session?.amount, session?.currency, usesWholeUnits]);
 
   async function continueToCard(event) {
     event.preventDefault();
@@ -25,6 +29,10 @@ export default function AmountPage() {
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
       setError('Enter an amount greater than zero.');
+      return;
+    }
+    if (usesWholeUnits && !Number.isInteger(numericAmount)) {
+      setError('Enter a whole amount in LKR; cents are not accepted.');
       return;
     }
     setBusy(true);
@@ -84,12 +92,20 @@ export default function AmountPage() {
             id="amount"
             name="amount"
             type="number"
-            inputMode="decimal"
-            min="0.01"
+            inputMode={usesWholeUnits ? 'numeric' : 'decimal'}
+            min={usesWholeUnits ? '1' : '0.01'}
             max="1000000"
-            step="0.01"
+            step={usesWholeUnits ? '1' : '0.01'}
             value={amount}
-            onChange={(event) => setAmount(event.target.value)}
+            onChange={(event) => {
+              const nextAmount = event.target.value;
+              if (usesWholeUnits && nextAmount !== '' && !/^\d+$/.test(nextAmount)) {
+                setError('Enter a whole amount in LKR; cents are not accepted.');
+                return;
+              }
+              setAmount(nextAmount);
+              setError('');
+            }}
             required
           />
         </div>

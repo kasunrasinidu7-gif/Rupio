@@ -109,6 +109,8 @@ The former `/mockpay/api/...` and `/mockpay/checkout/...` paths remain as compat
 
 The simulated OTP is `0000`.
 
+LKR checkout amounts use whole rupees only; decimal cents are rejected. Other supported currencies may use up to two decimal places.
+
 Use any future expiry date and a three- or four-digit CVV. Rupio accepts only these fake test numbers and does not save card numbers, expiry dates, or CVVs. This is not a real payment processor.
 
 Firestore stores session/payment references, requested and final amounts, currency, status, expiry, callback URL, and callback delivery status. It never stores card details. Existing Firestore collection names are retained to avoid disrupting any records created by the earlier prototype.
