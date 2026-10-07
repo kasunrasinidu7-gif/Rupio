@@ -82,8 +82,8 @@ export async function processPayment(request, response) {
   } else if (body.action === 'cancel') {
     result = { status: 'CANCELLED', amount: session.amount, message: 'The customer cancelled the checkout.' };
   } else if (body.action === 'pay') {
-    if (String(body.otp || '') !== '0000') {
-      throw httpError(400, 'Incorrect test OTP. Enter 0000 to confirm.');
+    if (String(body.otp || '') !== '000000') {
+      throw httpError(400, 'Incorrect test OTP. Enter 000000 to confirm.');
     }
     result = {
       ...cardOutcome(body.cardNumber, body.expiry, body.cvv),

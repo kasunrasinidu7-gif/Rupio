@@ -75,7 +75,7 @@ export default function OtpPage() {
         <div>
           <p className="eyebrow">Test verification</p>
           <h1>Confirm with OTP</h1>
-          <p className="muted">Enter the test OTP <strong>0000</strong> to continue.</p>
+          <p className="muted">Enter the test OTP <strong>000000</strong> to continue.</p>
         </div>
       </div>
       <AmountSummary amount={session.amount} currency={session.currency} reference={session.merchantReference} compact />
@@ -86,10 +86,10 @@ export default function OtpPage() {
           id="otp"
           autoComplete="one-time-code"
           inputMode="numeric"
-          maxLength="4"
-          placeholder="0000"
+          maxLength="6"
+          placeholder="000000"
           value={otp}
-          onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 4))}
+          onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
           required
         />
         {error && <p className="form-error" role="alert">{error}</p>}
