@@ -11,22 +11,20 @@ permissions: {}
 jobs:
   health-check:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 5
     steps:
       - name: Request the Render health endpoint
         env:
-          RENDER_BACKEND_URL: ${{ vars.RENDER_BACKEND_URL }}
+          # Override this repository variable when checking a different Render service (for example staging).
+          RENDER_BACKEND_URL: ${{ vars.RENDER_BACKEND_URL || 'https://rupio-api.onrender.com' }}
         run: |
-          if [[ -z "$RENDER_BACKEND_URL" ]]; then
-            echo "Set the GitHub Actions variable RENDER_BACKEND_URL to the Render backend origin."
-            exit 1
-          fi
-
           if [[ "$RENDER_BACKEND_URL" != https://* ]]; then
             echo "RENDER_BACKEND_URL must start with https:// and contain only the service origin."
             exit 1
           fi
 
+          echo "Checking Render health at ${RENDER_BACKEND_URL%/}/health"
           curl --fail --silent --show-error \
-            --connect-timeout 10 --max-time 20 \
+            --retry 2 --retry-delay 5 --retry-all-errors \
+            --connect-timeout 15 --max-time 90 \
             "${RENDER_BACKEND_URL%/}/health"
