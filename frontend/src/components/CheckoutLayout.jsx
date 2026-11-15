@@ -55,7 +55,7 @@ function CheckoutFrame() {
   }, [countdown.seconds, navigate, sessionId, timerActive]);
 
   if (loading || transitioning || bypassAmountEntry) {
-    return <LoadingScreen message={loading ? 'Preparing your secure checkout…' : 'Loading the next payment step…'} />;
+    return <LoadingScreen minimal message={loading ? 'Preparing your secure checkout…' : 'Loading the next payment step…'} />;
   }
 
   return (
