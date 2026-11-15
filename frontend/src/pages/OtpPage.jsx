@@ -70,32 +70,36 @@ export default function OtpPage() {
 
   return (
     <section className="panel">
-      <div className="step-heading">
-        <span className="step-number">03</span>
-        <div>
-          <p className="eyebrow">Secure verification</p>
-          <h1>Confirm with OTP</h1>
-          <p className="muted">Enter the six-digit verification code to continue.</p>
-        </div>
+      <div className="card-payment-title otp-title">
+        <h1>Enter OTP</h1>
       </div>
-      <form className="form-stack" onSubmit={confirmOtp}>
-        <label className="field-label" htmlFor="otp">One-time password</label>
+      <p className="otp-instruction">Rupio sent a 6-digit verification code to confirm this payment.</p>
+      <form className="form-stack otp-form" onSubmit={confirmOtp}>
+        <div className="otp-code-input" aria-label="Verification code">
         <input
-          className="text-input"
+          className="otp-accessible-input"
           id="otp"
+          aria-label="Six-digit verification code"
           autoComplete="one-time-code"
           inputMode="numeric"
           maxLength="6"
-          placeholder="000000"
+          pattern="[0-9]{6}"
           value={otp}
           onChange={(event) => setOtp(event.target.value.replace(/\D/g, '').slice(0, 6))}
           required
         />
+          <div className="otp-digit-row" aria-hidden="true">
+            {Array.from({ length: 6 }, (_, index) => (
+              <span className={index === Math.min(otp.length, 5) ? 'otp-digit active' : 'otp-digit'} key={index}>{otp[index] || ''}</span>
+            ))}
+          </div>
+        </div>
+        <button className="resend-otp-button" type="button">Resend OTP</button>
         {error && <p className="form-error" role="alert">{error}</p>}
-        <PrimaryButton type="submit" disabled={busy || session.status !== 'PENDING'}>
-          {busy ? 'Confirming…' : 'Confirm OTP'} <span aria-hidden="true">→</span>
+        <PrimaryButton className="otp-submit-button" type="submit" disabled={busy || session.status !== 'PENDING'}>
+          {busy ? 'Confirming…' : 'Confirm'}
         </PrimaryButton>
-        <button className="cancel-button" type="button" onClick={cancelCheckout} disabled={busy}>
+        <button className="cancel-button otp-cancel-button" type="button" onClick={cancelCheckout} disabled={busy}>
           Cancel payment
         </button>
       </form>

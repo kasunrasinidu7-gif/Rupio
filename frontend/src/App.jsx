@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import CheckoutLayout from './components/CheckoutLayout.jsx';
 import AmountPage from './pages/AmountPage.jsx';
 import CardPage from './pages/CardPage.jsx';
+import AmountConfirmationPage from './pages/AmountConfirmationPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import OtpPage from './pages/OtpPage.jsx';
 import ResultPage from './pages/ResultPage.jsx';
@@ -12,11 +13,13 @@ export default function App() {
     <Routes>
       <Route path="/checkout/:sessionId" element={<CheckoutLayout />}>
         <Route index element={<AmountPage />} />
+        <Route path="confirm" element={<AmountConfirmationPage />} />
         <Route path="card" element={<CardPage />} />
         <Route path="otp" element={<OtpPage />} />
       </Route>
       <Route path="/mockpay/checkout/:sessionId" element={<CheckoutLayout />}>
         <Route index element={<AmountPage />} />
+        <Route path="confirm" element={<AmountConfirmationPage />} />
         <Route path="card" element={<CardPage />} />
         <Route path="otp" element={<OtpPage />} />
       </Route>

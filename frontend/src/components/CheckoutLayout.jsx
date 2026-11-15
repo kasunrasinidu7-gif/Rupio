@@ -3,7 +3,6 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { processPayment } from '../api/rupioApi.js';
 import { CheckoutProvider, useCheckout } from '../context/CheckoutContext.jsx';
 import useCountdown from '../hooks/useCountdown.js';
-import AmountSummary from './AmountSummary.jsx';
 import BrandHeader from './BrandHeader.jsx';
 import LoadingScreen from './LoadingScreen.jsx';
 
@@ -12,9 +11,9 @@ function CheckoutFrame() {
   const { sessionId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const isStep = /\/(?:mockpay\/)?checkout\/[^/]+(?:\/(?:card|otp))?$/.test(location.pathname);
+  const isStep = /\/(?:mockpay\/)?checkout\/[^/]+(?:\/(?:confirm|card|otp))?$/.test(location.pathname);
   const isAmountStep = /\/(?:mockpay\/)?checkout\/[^/]+$/.test(location.pathname);
-  const isCardStep = /\/(?:mockpay\/)?checkout\/[^/]+\/card$/.test(location.pathname);
+  const isConfirmationStep = /\/(?:mockpay\/)?checkout\/[^/]+\/confirm$/.test(location.pathname);
   const isOtpStep = /\/(?:mockpay\/)?checkout\/[^/]+\/otp$/.test(location.pathname);
   const timerActive = !loading && session?.status === 'PENDING' && isStep;
   const countdown = useCountdown(location.pathname, timerActive);
@@ -54,8 +53,8 @@ function CheckoutFrame() {
   return (
     <div className="app-shell">
       <BrandHeader />
-      <main className="checkout-wrap">
-        <div className={isAmountStep ? 'checkout-toolbar amount-toolbar' : isOtpStep ? 'checkout-toolbar otp-toolbar' : 'checkout-toolbar'}>
+      <main className={isOtpStep ? 'checkout-wrap otp-checkout-wrap' : isConfirmationStep ? 'checkout-wrap confirmation-checkout-wrap' : 'checkout-wrap'}>
+        <div className={isAmountStep ? 'checkout-toolbar amount-toolbar' : isOtpStep ? 'checkout-toolbar otp-toolbar' : isConfirmationStep ? 'checkout-toolbar confirmation-toolbar' : 'checkout-toolbar'}>
           <span>Secure checkout</span>
           {session?.status === 'PENDING' && (
             <strong className={countdown.seconds < 30 ? 'timer timer-warning' : 'timer'}>
@@ -63,16 +62,11 @@ function CheckoutFrame() {
             </strong>
           )}
         </div>
-        <div className={isCardStep ? 'checkout-grid card-step-grid' : isOtpStep ? 'checkout-grid otp-step-grid' : isAmountStep ? 'checkout-grid amount-step-grid' : 'checkout-grid'}>
+        <div className={isOtpStep ? 'checkout-grid otp-step-grid' : isAmountStep ? 'checkout-grid amount-step-grid' : 'checkout-grid'}>
           <div className="checkout-main">
             {timeoutError && <p className="form-error" role="alert">{timeoutError}</p>}
             <Outlet />
           </div>
-          {isCardStep && session && (
-            <aside className="checkout-aside">
-              <AmountSummary amount={session.amount} currency={session.currency} />
-            </aside>
-          )}
         </div>
         <p className="footer-note">Rupio is a simulated gateway. No real money is charged.</p>
       </main>

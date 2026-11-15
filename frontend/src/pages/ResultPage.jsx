@@ -3,12 +3,13 @@ import { useParams } from 'react-router-dom';
 import { getPayment } from '../api/rupioApi.js';
 import BrandHeader from '../components/BrandHeader.jsx';
 import LoadingScreen from '../components/LoadingScreen.jsx';
-import PaymentStatus from '../components/PaymentStatus.jsx';
+import { formatMoney, statusLabel } from '../utils/format.js';
 
 export default function ResultPage() {
   const { paymentId } = useParams();
   const [payment, setPayment] = useState(null);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -20,6 +21,16 @@ export default function ResultPage() {
 
   if (!payment && !error) return <LoadingScreen message="Loading your payment result…" />;
 
+  async function copyPaymentId() {
+    try {
+      await navigator.clipboard.writeText(payment.paymentId);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   return (
     <main className="app-shell">
       <BrandHeader />
@@ -29,24 +40,22 @@ export default function ResultPage() {
             {error
               ? <div className="error-panel" role="alert">{error}</div>
               : <>
-                  <PaymentStatus status={payment.status} message={payment.message} />
-                  <div className="receipt-row"><span>Rupio reference</span><code>{payment.paymentId}</code></div>
-                  <div className="receipt-row">
-                    <span>Merchant notification</span>
-                    <strong className={payment.callbackDelivery === 'DELIVERED' ? 'delivery-ok' : payment.callbackDelivery === 'FAILED' ? 'delivery-failed' : 'delivery-pending'}>
-                      {payment.callbackDelivery === 'DELIVERED' ? 'Sent' : payment.callbackDelivery === 'FAILED' ? 'Not delivered' : 'Pending'}
-                    </strong>
+                  <div className={'result-status result-status-' + (payment.status === 'SUCCESS' ? 'success' : payment.status === 'TIMEOUT' ? 'timeout' : 'failure')} role="status">
+                    <span className="result-status-icon" aria-hidden="true">{payment.status === 'SUCCESS' ? '✓' : '!'}</span>
+                    <h1>{statusLabel(payment.status)}</h1>
                   </div>
-                  {payment.callbackMessage && payment.callbackDelivery !== 'DELIVERED' && (
-                    <p className="field-hint">Merchant callback: {payment.callbackMessage}</p>
-                  )}
-                  {payment.returnUrl
-                    ? <a className="primary-button button-link" href={payment.returnUrl}>Return to app</a>
-                    : <p className="field-hint">You can close this page and return to the app.</p>}
+                  <div className="result-amount">{formatMoney(payment.amount, payment.currency)}</div>
+                  <div className="transaction-id">
+                    <span>Transaction ID</span>
+                    <code>{payment.paymentId}</code>
+                    <button className="copy-id-button" type="button" onClick={copyPaymentId}>{copied ? 'Copied' : 'Copy'}</button>
+                  </div>
+                  <button className="primary-button dashboard-button" type="button" onClick={() => payment.returnUrl ? window.location.assign(payment.returnUrl) : window.history.back()}>
+                    Return to Home
+                  </button>
                 </>}
           </section>
         </div>
-        <p className="footer-note">Rupio simulated checkout. No real funds were moved.</p>
       </div>
     </main>
   );
