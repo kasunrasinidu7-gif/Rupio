@@ -66,6 +66,10 @@ function CheckoutFrame() {
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7" /></svg>
           </button>
           <h1>Top Up</h1>
+          <div className="topup-brand-lockup" aria-label="Rupio">
+            <span className="brand-mark" aria-hidden="true">R</span>
+            <span>Rupio</span>
+          </div>
           {session?.status === 'PENDING' && <strong className={countdown.seconds < 30 ? 'topup-timer timer-warning' : 'topup-timer'}>{countdown.label} left</strong>}
         </header>
       ) : <BrandHeader />}

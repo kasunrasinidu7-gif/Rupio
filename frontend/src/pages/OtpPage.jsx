@@ -56,9 +56,9 @@ export default function OtpPage() {
   if (sessionError) return <div className="panel error-panel" role="alert">{sessionError}</div>;
   if (!session) return null;
   if (session.status !== 'PENDING' && session.paymentId) {
-    return <LoadingScreen message="Loading your payment result..." />;
+    return <LoadingScreen minimal message="Loading your payment result..." />;
   }
-  if (busy) return <LoadingScreen message="Processing your payment..." />;
+  if (busy) return <LoadingScreen minimal message="Processing your payment..." />;
   if (!cardDetails) {
     return (
       <section className="panel">

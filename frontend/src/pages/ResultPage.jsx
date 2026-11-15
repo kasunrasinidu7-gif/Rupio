@@ -19,7 +19,7 @@ export default function ResultPage() {
     return () => { active = false; };
   }, [paymentId]);
 
-  if (!payment && !error) return <LoadingScreen message="Loading your payment result…" />;
+  if (!payment && !error) return <LoadingScreen minimal message="Loading your payment result…" />;
 
   async function copyPaymentId() {
     try {
