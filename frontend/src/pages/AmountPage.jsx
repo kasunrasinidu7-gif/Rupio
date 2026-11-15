@@ -43,7 +43,7 @@ export default function AmountPage() {
     try {
       await updateAmount(sessionId, numericAmount);
       await refresh();
-      navigate('/checkout/' + sessionId + '/card');
+      navigate('/checkout/' + sessionId + '/confirm');
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -80,7 +80,7 @@ export default function AmountPage() {
       <div className="step-heading">
         <span className="step-number">01</span>
         <div>
-          <p className="eyebrow">Payment amount</p>
+          <p className="eyebrow">TOP-UP AMOUNT</p>
           <h1>Enter your amount</h1>
           <p className="muted">You can edit the amount before continuing.</p>
         </div>
@@ -115,7 +115,7 @@ export default function AmountPage() {
         <p className="field-hint">Final amount: {formatMoney(Number(amount), session.currency)}</p>
         {error && <p className="form-error" role="alert">{error}</p>}
         <PrimaryButton type="submit" disabled={busy || session.status !== 'PENDING'}>
-          {busy ? 'Confirming…' : 'Confirm'}
+          {busy ? 'Saving amount…' : 'Continue'}
         </PrimaryButton>
         <button className="cancel-button" type="button" onClick={cancelCheckout} disabled={busy}>
           Cancel payment

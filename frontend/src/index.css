@@ -179,14 +179,13 @@ body { background: #f4f5f6; color: #18344d; }
 .header-security span { margin-right: 7px; color: #1681a8; }
 .checkout-wrap { width: min(100% - 40px, 700px); max-width: 700px; margin: 30px auto 0; }
 .checkout-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
-.card-step-grid { grid-template-columns: minmax(0, 1.8fr) minmax(220px, .85fr); }
 .amount-step-grid { width: min(100%, 540px); margin-inline: auto; }
 .amount-step-grid .checkout-main > .panel { min-height: 0; }
 .amount-toolbar { max-width: 540px; margin-inline: auto; }
 .otp-step-grid { width: min(100%, 500px); margin-inline: auto; }
 .otp-step-grid .checkout-main > .panel { min-height: 0; padding: 30px 28px; }
 .otp-toolbar { max-width: 500px; margin-inline: auto; }
-.checkout-main, .checkout-aside { min-width: 0; }
+.checkout-main { min-width: 0; }
 .checkout-main { min-width: 0; }
 .checkout-main > .panel, .result-panel { min-height: 420px; padding: 32px 38px; border: 1px solid #b9bec3; border-radius: 12px; box-shadow: none; }
 .step-heading { align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #d7dadd; }
@@ -218,7 +217,7 @@ body { background: #f4f5f6; color: #18344d; }
 .footer-note { margin-top: 18px; color: #758490; }
 .result-panel { min-height: 0; }
 .result-panel { margin-top: 0; }
-.result-only { width: min(100%, 620px); margin-inline: auto; grid-template-columns: minmax(0, 1fr); justify-content: center; }
+.result-only { width: min(100%, 540px); margin-inline: auto; grid-template-columns: minmax(0, 1fr); justify-content: center; }
 .result-only .result-panel { min-height: 0; }
 .result-panel { margin-top: 0; }
 .receipt-row { align-items: flex-start; flex-wrap: wrap; }
@@ -234,8 +233,6 @@ body { background: #f4f5f6; color: #18344d; }
   .brand-header { padding: 0 20px; }
   .checkout-wrap { width: min(100% - 24px, 560px); margin-top: 16px; }
   .checkout-grid { grid-template-columns: 1fr; gap: 16px; }
-  .card-step-grid { grid-template-columns: minmax(0, 1fr); }
-  .checkout-aside { width: 100%; }
   .checkout-main > .panel, .result-panel { min-height: 0; padding: 24px 20px; }
   .otp-step-grid .checkout-main > .panel { padding: 24px 20px; }
   .order-summary { padding: 18px 16px; }
@@ -267,4 +264,134 @@ body { background: #f4f5f6; color: #18344d; }
   .result-only { width: 100%; }
   .order-summary { padding: 18px 15px; }
   .order-total strong { font-size: 21px; }
+}
+
+/* Rupio-specific review, local card entry, and receipt details. */
+.confirmation-panel { width: min(100%, 540px); min-height: 0 !important; margin-inline: auto; padding: 28px 30px; }
+.confirmation-heading { padding-bottom: 14px; border-bottom: 1px solid #d7dadd; text-align: center; }
+.confirmation-heading h1 { margin: 0; color: #126eae; font-size: 20px; font-weight: 650; }
+.confirmation-amount { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 22px 0 6px; padding: 20px 16px; background: #f4f5f6; text-align: center; }
+.confirmation-amount span { color: #687d8c; font-size: 13px; font-weight: 500; }
+.confirmation-amount strong { color: #176d99; font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.edit-amount-link { display: block; width: fit-content; margin: 12px auto 18px; color: #176d99; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.confirmation-panel > .primary-button { display: flex; width: 150px; min-height: 46px; margin: 0 auto; }
+.confirmation-checkout-wrap { width: min(100% - 40px, 540px); max-width: 540px; }
+.confirmation-toolbar { max-width: 100%; }
+.payment-method-choice { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border: 1px solid #cbd4dc; border-radius: 8px; background: #f8fafb; }
+.payment-method-choice > span:nth-child(2) { display: grid; gap: 3px; }
+.payment-method-choice strong { color: #29495f; font-size: 12px; font-weight: 650; }
+.payment-method-choice small { color: #758694; font-size: 11px; }
+.payment-method-icon { position: relative; width: 34px; height: 24px; flex: 0 0 34px; border: 2px solid #39728e; border-radius: 4px; }
+.payment-method-icon::after { position: absolute; top: 5px; right: 0; left: 0; height: 4px; background: #39728e; content: ''; }
+.method-selected { display: grid; width: 20px; height: 20px; place-items: center; margin-left: auto; border-radius: 50%; color: #fff; background: #1d7a57; font-size: 12px; }
+.select-input { appearance: auto; padding-right: 12px; color: #314b60; background: #fff; }
+.cvv-input { max-width: 170px; }
+.result-panel { width: min(100%, 540px); min-height: 0; margin-inline: auto; padding: 30px 28px; }
+.result-status { display: grid; justify-items: center; gap: 12px; text-align: center; }
+.result-status-icon { display: grid; width: 60px; height: 60px; place-items: center; border-radius: 50%; font-size: 31px; font-weight: 500; }
+.result-status-success .result-status-icon { color: #13834c; background: #e7f7ef; }
+.result-status-failure .result-status-icon { color: #c62828; background: #fff0ee; }
+.result-status-timeout .result-status-icon { color: #9a6700; background: #fff6dc; }
+.result-status h1 { margin: 0; color: var(--deep); font-size: 20px; letter-spacing: -.02em; }
+.result-amount { margin: 8px 0 20px; color: #176d99; font-size: clamp(22px, 4.5vw, 26px); font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; }
+.transaction-id { display: grid; justify-items: center; gap: 8px; padding: 17px 0; border-top: 1px solid #d9dfe3; border-bottom: 1px solid #d9dfe3; text-align: center; }
+.transaction-id span { color: #526a7c; font-size: 12px; }
+.transaction-id code { max-width: 100%; color: #2b3f50; font-size: 11px; overflow-wrap: anywhere; }
+.copy-id-button { padding: 5px 10px; border: 0; color: #176d99; background: transparent; font-size: 12px; font-weight: 650; cursor: pointer; }
+.dashboard-button { min-height: 48px; margin-top: 20px; font-size: 13px; }
+
+@media (max-width: 420px) {
+  .confirmation-checkout-wrap { width: calc(100% - 20px); }
+  .confirmation-panel { padding: 22px 18px !important; }
+  .confirmation-amount strong { font-size: 22px; }
+  .payment-method-choice { padding: 11px; }
+  .result-panel { padding: 24px 18px !important; }
+  .result-status h1 { font-size: 19px; }
+}
+
+/* Reference-style Rupio card payment form. */
+.card-payment-panel { width: 100%; max-width: 700px; min-height: 0 !important; margin-inline: auto; padding: 27px 30px; border-radius: 10px; }
+.card-payment-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 12px; border-bottom: 1px solid #aeb5ba; }
+.card-payment-title h1 { display: flex; align-items: center; gap: 5px; margin: 0; color: #126eae; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
+.lock-icon { width: 14px; height: 16px; fill: #e7b83d; stroke: #6d6650; stroke-width: 1.4; }
+.required-note { color: #176d99; font-size: 11px; white-space: nowrap; }
+.card-payment-form { display: flex; flex-direction: column; gap: 12px; padding-top: 16px; }
+.card-type-fieldset { min-width: 0; padding: 0; margin: 0 0 8px; border: 0; }
+.card-type-fieldset legend { padding: 0; margin-bottom: 10px; color: #155c91; font-size: 12px; font-weight: 700; }
+.card-type-fieldset legend span, .card-field .field-label span, .cvv-field .field-label span { color: #1479ad; }
+.card-network-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 430px; padding-left: 4px; }
+.card-network-option { display: flex; min-width: 0; align-items: center; gap: 8px; color: #176d99; font-size: 12px; cursor: pointer; }
+.card-network-option input { width: 16px; height: 16px; margin: 0; accent-color: #1479ad; }
+.visa-mark { display: grid; width: 42px; height: 25px; place-items: center; border: 1px solid #c9d0d5; color: #173f91; background: #fff; font-size: 11px; font-style: italic; font-weight: 800; }
+.mastercard-mark { position: relative; display: inline-flex; width: 38px; height: 25px; align-items: center; justify-content: center; border: 1px solid #c9d0d5; background: #fff; }
+.mastercard-mark i { width: 15px; height: 15px; border-radius: 50%; background: #eb252b; }
+.mastercard-mark i + i { margin-left: -5px; background: #f49a1b; opacity: .96; }
+.card-field { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
+.card-field .field-label, .cvv-field .field-label { margin: 0; color: #155c91; font-size: 12px; font-weight: 700; }
+.test-card-picker { position: relative; }
+.card-field-label-row { display: flex; width: min(100%, 270px); align-items: center; justify-content: space-between; gap: 8px; }
+.card-number-error { margin: 0; }
+.test-cards-trigger { padding: 2px 0; border: 0; color: #176d99; background: transparent; font-size: 10px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.test-card-popover { position: absolute; z-index: 5; top: calc(100% + 3px); left: 0; display: grid; width: min(310px, 100%); padding: 5px; border: 1px solid #cbd4dc; border-radius: 7px; background: #fff; box-shadow: 0 8px 22px #00193c24; }
+.test-card-popover button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; padding: 8px 7px; border: 0; border-bottom: 1px solid #edf0f2; color: #344f62; background: #fff; font-size: 10px; text-align: left; cursor: pointer; }
+.test-card-popover button:last-child { border-bottom: 0; }
+.test-card-popover button:hover { background: #f4f7f8; }
+.test-card-popover code { color: #24506c; font-size: 9px; white-space: nowrap; }
+.otp-title { justify-content: center; margin-bottom: 13px; text-align: center; }
+.otp-title h1 { color: #126eae; font-size: 19px; }
+.otp-instruction { max-width: 360px; margin: 0 auto 4px; color: #858b90; font-size: 11px; line-height: 1.55; text-align: center; }
+.otp-form { align-items: center; gap: 13px; }
+.otp-code-input { position: relative; width: min(100%, 360px); margin-inline: auto; }
+.otp-accessible-input { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; opacity: 0; cursor: text; }
+.otp-digit-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.otp-digit { display: grid; min-width: 0; height: 44px; place-items: center; border: 1px solid #aeb5ba; border-radius: 5px; color: #244c68; background: #fafafa; font-size: 17px; font-variant-numeric: tabular-nums; }
+.otp-digit.active { border-color: #1479ad; }
+.otp-code-input:focus-within .otp-digit.active { outline: 2px solid #1479ad28; }
+.resend-otp-button { align-self: center; padding: 0; border: 0; color: #176d99; background: transparent; font-size: 11px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.otp-submit-button { align-self: center; width: min(180px, 70%); min-height: 42px; padding: 0 14px; font-size: 12px; }
+.otp-cancel-button { align-self: center; margin-top: -5px; }
+.reference-input { height: 43px; border: 1px solid #aeb5ba; border-radius: 5px; background-color: #fafafa; font-size: 13px; }
+.card-number-field .reference-input { width: min(100%, 270px); }
+.expiry-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; max-width: 480px; }
+.select-input.reference-input { appearance: auto; padding-right: 10px; }
+.cvv-field { display: flex; flex-direction: column; gap: 4px; }
+.cvv-help { margin: 0; color: #176d99; font-size: 10px; line-height: 1.45; }
+.cvv-input-row { display: flex; align-items: center; gap: 10px; }
+.cvv-input { width: 76px; }
+.card-security-guide { width: 70px; height: 38px; }
+.card-payment-panel .order-summary { padding: 10px 0 0; margin-top: 5px; border: 0; border-radius: 0; background: transparent; }
+.card-payment-panel .order-summary h2 { padding-bottom: 10px; margin-bottom: 10px; color: #126eae; font-size: 15px; }
+.card-payment-panel .order-total { display: flex; min-height: 54px; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 13px; border-radius: 6px; background: #f2f3f4; }
+.card-payment-panel .order-total span { color: #155c91; font-size: 11px; }
+.card-payment-panel .order-total strong { color: #176d99; font-size: 18px; }
+.card-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 5px; }
+.reference-cancel-button, .reference-pay-button { width: 130px; min-height: 42px; border: 1px solid #999; border-radius: 5px; font-size: 12px; font-weight: 650; cursor: pointer; }
+.reference-cancel-button { color: #384b59; background: #fafafa; }
+.reference-pay-button { color: #126eae; background: #e9e9e9; }
+.reference-cancel-button:disabled, .reference-pay-button:disabled { cursor: wait; opacity: .65; }
+
+@media (max-width: 760px) {
+  .card-payment-panel { padding: 24px 22px; }
+  .card-payment-form { gap: 11px; }
+  .card-payment-panel .order-summary { padding-top: 7px; }
+}
+
+@media (max-width: 420px) {
+  .card-payment-panel { padding: 20px 16px; }
+  .card-payment-title h1 { font-size: 17px; }
+  .required-note { font-size: 10px; }
+  .card-network-options { gap: 8px; }
+  .otp-digit-row { gap: 6px; }
+  .otp-digit { height: 42px; }
+  .card-network-option { gap: 5px; font-size: 11px; }
+  .visa-mark { width: 36px; }
+  .mastercard-mark { width: 34px; }
+  .expiry-fields { gap: 10px; }
+  .card-payment-panel .order-total strong { font-size: 16px; }
+  .reference-cancel-button, .reference-pay-button { width: 44%; min-height: 40px; }
+}
+
+.otp-checkout-wrap { width: min(100% - 40px, 500px); max-width: 500px; }
+@media (max-width: 420px) {
+  .otp-checkout-wrap { width: calc(100% - 20px); }
 }
