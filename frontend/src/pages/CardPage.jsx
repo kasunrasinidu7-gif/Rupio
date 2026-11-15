@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { processPayment } from '../api/rupioApi.js';
-import AmountSummary from '../components/AmountSummary.jsx';
+import LoadingScreen from '../components/LoadingScreen.jsx';
 import PaymentStatus from '../components/PaymentStatus.jsx';
 import PrimaryButton from '../components/PrimaryButton.jsx';
 import { useCheckout } from '../context/CheckoutContext.jsx';
@@ -47,7 +47,7 @@ export default function CardPage() {
     setCvv('123');
   }
 
-  if (loading) return <div className="panel loading-panel">Loading your checkout…</div>;
+  if (loading) return <LoadingScreen message="Loading your payment details…" />;
   if (sessionError) return <div className="panel error-panel" role="alert">{sessionError}</div>;
   if (!session) return null;
   if (session.status !== 'PENDING' && session.paymentId) {
@@ -64,12 +64,11 @@ export default function CardPage() {
       <div className="step-heading">
         <span className="step-number">02</span>
         <div>
-          <p className="eyebrow">Test card</p>
+          <p className="eyebrow">Payment details</p>
           <h1>Card details</h1>
-          <p className="muted">Enter demo card details. OTP confirmation is next.</p>
+          <p className="muted">Enter your card details to continue securely.</p>
         </div>
       </div>
-      <AmountSummary amount={session.amount} currency={session.currency} reference={session.clientReference} compact />
 
       <form className="form-stack" onSubmit={continueToOtp}>
         <label className="field-label" htmlFor="card-number">Card number</label>
