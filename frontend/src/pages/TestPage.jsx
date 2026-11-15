@@ -24,22 +24,37 @@ export default function TestPage() {
   }
 
   return (
-    <main className="result-shell">
+    <main className="app-shell">
       <BrandHeader />
-      <section className="panel result-panel">
-        <p className="eyebrow">RUPIO TEST</p>
-        <h1>Try a test checkout</h1>
-        <p className="muted">Start once, then follow the checkout steps: amount, test card, and result.</p>
-        {error && <p className="form-error" role="alert">{error}</p>}
-        <button
-          className="primary-button button-link"
-          type="button"
-          onClick={startCheckout}
-          disabled={loading}
-        >
+      <div className="checkout-wrap">
+        <div className="checkout-grid">
+          <section className="panel result-panel">
+            <div className="step-heading">
+              <span className="step-number">01</span>
+              <div>
+                <p className="eyebrow">PAYMENT</p>
+                <h1>Start checkout</h1>
+                <p className="muted">Continue to enter an amount and payment details.</p>
+              </div>
+            </div>
+            {error && <p className="form-error" role="alert">{error}</p>}
+            <button
+              className="primary-button button-link"
+              type="button"
+              onClick={startCheckout}
+              disabled={loading}
+            >
           {loading ? 'Starting…' : 'Start test checkout'} <span aria-hidden="true">→</span>
-        </button>
-      </section>
+            </button>
+          </section>
+          <aside className="order-summary">
+            <h2>Your Order</h2>
+            <div className="order-total"><span>Total amount</span><strong>Set on next step</strong></div>
+            <div className="order-detail"><span>Payment provider</span><span>Rupio</span></div>
+          </aside>
+        </div>
+        <p className="footer-note">Demo checkout only. No real funds are moved.</p>
+      </div>
     </main>
   );
 }

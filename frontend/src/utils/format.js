@@ -1,5 +1,5 @@
 export function formatMoney(amount, currency = 'LKR') {
-  const fractionDigits = currency === 'LKR' ? 0 : 2;
+  const fractionDigits = 2;
   try {
     return new Intl.NumberFormat('en-LK', {
       style: 'currency',

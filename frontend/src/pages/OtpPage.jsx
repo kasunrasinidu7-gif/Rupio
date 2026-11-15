@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { processPayment } from '../api/rupioApi.js';
-import AmountSummary from '../components/AmountSummary.jsx';
+import LoadingScreen from '../components/LoadingScreen.jsx';
 import PaymentStatus from '../components/PaymentStatus.jsx';
 import PrimaryButton from '../components/PrimaryButton.jsx';
 import { useCheckout } from '../context/CheckoutContext.jsx';
@@ -47,7 +47,7 @@ export default function OtpPage() {
     }
   }
 
-  if (loading) return <div className="panel loading-panel">Loading your checkout…</div>;
+  if (loading) return <LoadingScreen message="Preparing verification…" />;
   if (sessionError) return <div className="panel error-panel" role="alert">{sessionError}</div>;
   if (!session) return null;
   if (session.status !== 'PENDING' && session.paymentId) {
@@ -73,12 +73,11 @@ export default function OtpPage() {
       <div className="step-heading">
         <span className="step-number">03</span>
         <div>
-          <p className="eyebrow">Test verification</p>
+          <p className="eyebrow">Secure verification</p>
           <h1>Confirm with OTP</h1>
-          <p className="muted">Enter the test OTP <strong>000000</strong> to continue.</p>
+          <p className="muted">Enter the six-digit verification code to continue.</p>
         </div>
       </div>
-      <AmountSummary amount={session.amount} currency={session.currency} reference={session.clientReference} compact />
       <form className="form-stack" onSubmit={confirmOtp}>
         <label className="field-label" htmlFor="otp">One-time password</label>
         <input

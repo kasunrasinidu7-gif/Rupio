@@ -4,9 +4,9 @@ export default function BrandHeader() {
       <div className="brand-mark" aria-hidden="true">R</div>
       <div className="brand-copy">
         <span className="brand-name">Rupio</span>
-        <span className="brand-caption">Hosted checkout</span>
+        <span className="brand-caption">Secure payment</span>
       </div>
-      <span className="test-badge"><span className="status-dot" /> TEST MODE</span>
+      <div className="header-security">Secure checkout</div>
     </header>
   );
 }

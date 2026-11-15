@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { processPayment, updateAmount } from '../api/rupioApi.js';
-import AmountSummary from '../components/AmountSummary.jsx';
+import LoadingScreen from '../components/LoadingScreen.jsx';
 import PaymentStatus from '../components/PaymentStatus.jsx';
 import PrimaryButton from '../components/PrimaryButton.jsx';
 import { useCheckout } from '../context/CheckoutContext.jsx';
@@ -29,6 +29,10 @@ export default function AmountPage() {
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
       setError('Enter an amount greater than zero.');
+      return;
+    }
+    if (numericAmount > 1000000) {
+      setError('The maximum amount is 1,000,000.');
       return;
     }
     if (usesWholeUnits && !Number.isInteger(numericAmount)) {
@@ -59,7 +63,7 @@ export default function AmountPage() {
     }
   }
 
-  if (loading) return <div className="panel loading-panel">Loading your checkout…</div>;
+  if (loading) return <LoadingScreen message="Preparing your secure checkout…" />;
   if (sessionError) return <div className="panel error-panel" role="alert">{sessionError}</div>;
   if (!session) return null;
   if (session.status !== 'PENDING' && session.paymentId) {
@@ -82,8 +86,6 @@ export default function AmountPage() {
         </div>
       </div>
 
-      <AmountSummary amount={session.amount} currency={session.currency} reference={session.clientReference} />
-
       <form onSubmit={continueToCard} className="form-stack">
         <label className="field-label" htmlFor="amount">Amount in {session.currency}</label>
         <div className="amount-input-wrap">
@@ -91,7 +93,7 @@ export default function AmountPage() {
           <input
             id="amount"
             name="amount"
-            type="number"
+            type={usesWholeUnits ? 'text' : 'number'}
             inputMode={usesWholeUnits ? 'numeric' : 'decimal'}
             min={usesWholeUnits ? '1' : '0.01'}
             max="1000000"
@@ -108,12 +110,12 @@ export default function AmountPage() {
             }}
             required
           />
+          {usesWholeUnits && <span className="amount-fixed-decimals" aria-hidden="true">.00</span>}
         </div>
         <p className="field-hint">Final amount: {formatMoney(Number(amount), session.currency)}</p>
         {error && <p className="form-error" role="alert">{error}</p>}
         <PrimaryButton type="submit" disabled={busy || session.status !== 'PENDING'}>
-          {busy ? 'Please wait…' : 'Continue to card'}
-          <span aria-hidden="true">→</span>
+          {busy ? 'Confirming…' : 'Confirm'}
         </PrimaryButton>
         <button className="cancel-button" type="button" onClick={cancelCheckout} disabled={busy}>
           Cancel payment

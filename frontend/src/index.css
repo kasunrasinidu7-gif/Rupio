@@ -49,18 +49,6 @@ a { color: inherit; }
 .brand-copy { display: flex; flex-direction: column; gap: 2px; }
 .brand-name { font-size: 16px; font-weight: 800; letter-spacing: -.04em; }
 .brand-caption { color: var(--muted); font-size: 11px; }
-.test-badge {
-  margin-left: auto;
-  padding: 8px 11px;
-  border: 1px solid #cfe5fb;
-  border-radius: 999px;
-  color: var(--strong);
-  background: #eef7ff;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .08em;
-}
-.status-dot { display: inline-block; width: 6px; height: 6px; margin: 0 6px 1px 0; border-radius: 50%; background: var(--primary); }
 .checkout-wrap { width: min(100% - 32px, 520px); margin: 26px auto 0; }
 .secure-row { display: flex; align-items: center; justify-content: space-between; margin: 0 4px 12px; color: var(--muted); font-size: 11px; }
 .timer { color: var(--strong); font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -102,6 +90,7 @@ h1 { margin-bottom: 7px; color: var(--deep); font-size: clamp(21px, 4vw, 26px); 
 .amount-input-wrap:focus-within, .text-input:focus { border-color: var(--primary); outline: 3px solid #0072dc1c; }
 .amount-input-wrap span { color: var(--muted); font-size: 12px; font-weight: 700; }
 .amount-input-wrap input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--deep); font-size: 23px; font-weight: 700; }
+.amount-fixed-decimals { flex: 0 0 auto; margin-left: -10px; color: var(--deep); font-size: 23px; font-weight: 700; }
 .amount-input-wrap input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 .amount-input-wrap input[type=number]::-webkit-inner-spin-button,
 .amount-input-wrap input[type=number]::-webkit-outer-spin-button { margin: 0; -webkit-appearance: none; }
@@ -171,4 +160,111 @@ h1 { margin-bottom: 7px; color: var(--deep); font-size: clamp(21px, 4vw, 26px); 
   .summary-amount { font-size: 24px; }
   .result-shell { width: min(100% - 20px, 520px); }
   .result-panel { margin-top: 16px; }
+}
+
+/* Shared payment-form layout inspired by the supplied bank checkout reference. */
+body { background: #f4f5f6; color: #18344d; }
+.brand-header {
+  width: 100%;
+  max-width: none;
+  height: 78px;
+  padding: 0 max(28px, calc((100% - 1170px) / 2));
+  background: #fff;
+  border-bottom: 1px solid #e4e7ea;
+}
+.brand-mark { width: 38px; height: 38px; border-radius: 9px; box-shadow: none; }
+.brand-name { color: #174e78; font-size: 17px; letter-spacing: -.02em; }
+.brand-caption { font-size: 11px; }
+.header-security { margin-left: auto; color: #547084; font-size: 12px; font-weight: 600; }
+.header-security span { margin-right: 7px; color: #1681a8; }
+.checkout-wrap { width: min(100% - 40px, 700px); max-width: 700px; margin: 30px auto 0; }
+.checkout-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-items: start; }
+.card-step-grid { grid-template-columns: minmax(0, 1.8fr) minmax(220px, .85fr); }
+.amount-step-grid { width: min(100%, 540px); margin-inline: auto; }
+.amount-step-grid .checkout-main > .panel { min-height: 0; }
+.amount-toolbar { max-width: 540px; margin-inline: auto; }
+.otp-step-grid { width: min(100%, 500px); margin-inline: auto; }
+.otp-step-grid .checkout-main > .panel { min-height: 0; padding: 30px 28px; }
+.otp-toolbar { max-width: 500px; margin-inline: auto; }
+.checkout-main, .checkout-aside { min-width: 0; }
+.checkout-main { min-width: 0; }
+.checkout-main > .panel, .result-panel { min-height: 420px; padding: 32px 38px; border: 1px solid #b9bec3; border-radius: 12px; box-shadow: none; }
+.step-heading { align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid #d7dadd; }
+.step-number { flex-basis: 32px; height: 32px; border-radius: 50%; color: #fff; background: #1479ad; }
+.eyebrow { color: #647b8d; letter-spacing: .06em; }
+.step-heading .eyebrow { margin-bottom: 4px; }
+.step-heading h1 { margin-bottom: 0; font-size: 22px; letter-spacing: -.02em; }
+.step-heading .muted { margin-top: 7px; }
+.panel { border-radius: 12px; box-shadow: none; }
+.order-summary { padding: 22px 20px; border: 1px solid #b9bec3; border-radius: 10px; background: #fff; }
+.order-summary h2 { margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid #d7dadd; color: #24506c; font-size: 16px; font-weight: 650; }
+.order-total { display: grid; gap: 12px; padding: 15px 13px; background: #f4f5f6; }
+.order-total span { color: #344f62; font-size: 12px; font-weight: 600; }
+.order-total strong { color: #176d99; font-size: 20px; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.order-detail { display: flex; justify-content: space-between; gap: 12px; padding-top: 17px; color: #687d8c; font-size: 11px; }
+.order-detail span:last-child { max-width: 58%; overflow: hidden; color: #294b63; text-overflow: ellipsis; white-space: nowrap; }
+.checkout-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 4px 10px; color: #637a8c; font-size: 11px; }
+.checkout-toolbar .timer { color: #1475ad; font-size: 12px; }
+.checkout-toolbar .timer-warning { color: #b45309; }
+.form-stack { gap: 12px; }
+.field-label { font-size: 13px; }
+.text-input, .amount-input-wrap { border-color: #b9c3cb; border-radius: 7px; }
+.amount-input-wrap { height: 56px; }
+.primary-button { justify-content: center; min-height: 48px; border-radius: 7px; background: #1479ad; text-align: center; }
+.primary-button span { margin-left: 8px; }
+.primary-button:hover:not(:disabled) { background: #0d628f; transform: none; }
+.cancel-button { align-self: flex-start; padding-left: 0; font-size: 12px; }
+.demo-cards { border-radius: 7px; background: #f8f9fa; }
+.footer-note { margin-top: 18px; color: #758490; }
+.result-panel { min-height: 0; }
+.result-panel { margin-top: 0; }
+.result-only { width: min(100%, 620px); margin-inline: auto; grid-template-columns: minmax(0, 1fr); justify-content: center; }
+.result-only .result-panel { min-height: 0; }
+.result-panel { margin-top: 0; }
+.receipt-row { align-items: flex-start; flex-wrap: wrap; }
+.receipt-row code { max-width: 100%; overflow-wrap: anywhere; }
+.result-panel .payment-status { margin-bottom: 25px; }
+.loading-screen { display: flex; min-height: 380px; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #597082; text-align: center; }
+.loading-screen h1 { margin: 8px 0 0; font-size: 20px; }
+.loading-screen p { margin: 0; font-size: 13px; }
+.loading-spinner { width: 34px; height: 34px; border: 3px solid #dce4e9; border-top-color: #1479ad; border-radius: 50%; animation: rupio-spin .8s linear infinite; }
+@keyframes rupio-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .brand-header { padding: 0 20px; }
+  .checkout-wrap { width: min(100% - 24px, 560px); margin-top: 16px; }
+  .checkout-grid { grid-template-columns: 1fr; gap: 16px; }
+  .card-step-grid { grid-template-columns: minmax(0, 1fr); }
+  .checkout-aside { width: 100%; }
+  .checkout-main > .panel, .result-panel { min-height: 0; padding: 24px 20px; }
+  .otp-step-grid .checkout-main > .panel { padding: 24px 20px; }
+  .order-summary { padding: 18px 16px; }
+  .order-total { grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+  .order-total strong { text-align: right; }
+  .checkout-toolbar { margin: 0 2px 8px; font-size: 10px; }
+  .checkout-toolbar .timer { font-size: 11px; }
+  .receipt-row { gap: 6px; }
+  .receipt-row code { width: 100%; text-align: left; }
+  .payment-status { gap: 10px; }
+  .payment-status h1 { font-size: 19px; }
+  .payment-status p { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 420px) {
+  .brand-header { padding: 0 14px; }
+  .header-security { font-size: 10px; }
+  .brand-mark { width: 34px; height: 34px; }
+  .checkout-wrap { width: calc(100% - 20px); margin-top: 12px; }
+  .app-shell, .checkout-wrap, .checkout-grid, .checkout-main, .panel { min-width: 0; max-width: 100%; }
+  .checkout-main > .panel, .result-panel { padding: 20px 15px; border-radius: 10px; }
+  .otp-step-grid .checkout-main > .panel { padding: 20px 15px; }
+  .step-heading { gap: 9px; margin-bottom: 22px; }
+  .step-number { flex-basis: 30px; height: 30px; }
+  .step-heading h1 { font-size: 20px; }
+  .field-row { grid-template-columns: 1fr; }
+  .amount-input-wrap input, .amount-fixed-decimals { font-size: 21px; }
+  .primary-button { min-height: 46px; }
+  .result-only { width: 100%; }
+  .order-summary { padding: 18px 15px; }
+  .order-total strong { font-size: 21px; }
 }

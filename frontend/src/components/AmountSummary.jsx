@@ -1,16 +1,12 @@
 import { formatMoney } from '../utils/format.js';
 
-export default function AmountSummary({ amount, currency, reference, compact = false }) {
+export default function AmountSummary({ amount, currency }) {
   return (
-    <section className={compact ? 'amount-summary compact' : 'amount-summary'}>
-      <div className="summary-top">
-        <span className="eyebrow">PAYING TO</span>
-        <span className="summary-reference">{reference || 'Payment reference'}</span>
-      </div>
-      <div className="summary-amount">{formatMoney(amount, currency)}</div>
-      <div className="summary-bottom">
-        <span>Payment reference</span>
-        <span>{reference || '—'}</span>
+    <section className="order-summary">
+      <h2>Your Order</h2>
+      <div className="order-total">
+        <span>Total amount</span>
+        <strong>{formatMoney(amount, currency)}</strong>
       </div>
     </section>
   );

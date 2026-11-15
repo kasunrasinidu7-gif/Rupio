@@ -16,7 +16,7 @@ jobs:
       - name: Request the Render health endpoint
         env:
           # Override this repository variable when checking a different Render service (for example staging).
-          RENDER_BACKEND_URL: ${{ vars.RENDER_BACKEND_URL || 'https://rupio-api.onrender.com' }}
+          RENDER_BACKEND_URL: ${{ vars.RENDER_BACKEND_URL || 'https://rupio.onrender.com' }}
         run: |
           if [[ "$RENDER_BACKEND_URL" != https://* ]]; then
             echo "RENDER_BACKEND_URL must start with https:// and contain only the service origin."
