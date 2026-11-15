@@ -80,6 +80,7 @@ Content-Type: application/json
   "currency": "LKR",
   "callbackUrl": "https://your-app.example/api/rupio/callback",
   "returnUrl": "yourapp://payment/result",
+  "editAmountUrl": "yourapp://topup/amount",
   "customerReference": "customer-reference"
 }
 ~~~

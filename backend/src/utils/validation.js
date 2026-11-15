@@ -45,6 +45,20 @@ export function parseReturnUrl(value) {
   }
 }
 
+export function parseEditAmountUrl(value) {
+  if (value === undefined || value === null || value === '') return null;
+  if (typeof value !== 'string' || value.length > 2048) {
+    throw httpError(400, 'editAmountUrl must be a valid URL.');
+  }
+  try {
+    const url = new URL(value);
+    if (!['http:', 'https:', 'vpay:'].includes(url.protocol)) throw new Error('protocol');
+    return url.toString();
+  } catch {
+    throw httpError(400, 'editAmountUrl must use HTTP, HTTPS, or the vpay scheme.');
+  }
+}
+
 export function parseCurrency(value) {
   const currency = String(value || 'LKR').toUpperCase();
   if (!/^[A-Z]{3}$/.test(currency)) throw httpError(400, 'currency must be a three-letter code.');
