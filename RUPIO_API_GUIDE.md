@@ -44,11 +44,12 @@ Content-Type: application/json
   "currency": "LKR",
   "callbackUrl": "https://<your-app-backend>/api/webhooks/rupio",
   "returnUrl": "vpay://topup/result",
+  "editAmountUrl": "vpay://topup/amount",
   "customerReference": "<your-internal-customer-id>"
 }
 ```
 
-`clientReference` should uniquely identify the top-up in the integrating application and is limited to 100 characters. This is the current API field name; older prototype examples may use a different name, but new requests must send `clientReference`. Amounts must be positive and no more than 1,000,000; LKR must be a whole number of rupees. `callbackUrl` must be publicly reachable over HTTP or HTTPS. `returnUrl` is optional.
+`clientReference` should uniquely identify the top-up in the integrating application and is limited to 100 characters. This is the current API field name; older prototype examples may use a different name, but new requests must send `clientReference`. Amounts must be positive and no more than 1,000,000; LKR must be a whole number of rupees. `callbackUrl` must be publicly reachable over HTTP or HTTPS. `returnUrl` and `editAmountUrl` are optional. Live checkouts show the amount provided in this request on the confirmation page; the amount entry screen is reserved for test sessions. Set `editAmountUrl` to the VPay amount editing screen (including its app deep link) if the customer should be able to change the amount there.
 
 On success, Rupio responds with HTTP `201`:
 

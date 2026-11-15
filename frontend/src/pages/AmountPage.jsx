@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { processPayment, updateAmount } from '../api/rupioApi.js';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { updateAmount } from '../api/rupioApi.js';
 import LoadingScreen from '../components/LoadingScreen.jsx';
 import PaymentStatus from '../components/PaymentStatus.jsx';
 import PrimaryButton from '../components/PrimaryButton.jsx';
 import { useCheckout } from '../context/CheckoutContext.jsx';
-import { formatMoney } from '../utils/format.js';
 
 export default function AmountPage() {
   const { session, loading, error: sessionError, refresh } = useCheckout();
   const { sessionId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
@@ -18,10 +18,14 @@ export default function AmountPage() {
 
   useEffect(() => {
     if (session) {
-      const initialAmount = usesWholeUnits ? Math.round(Number(session.amount)) : session.amount;
-      setAmount(String(initialAmount));
+      if (location.state?.restoreAmount) {
+        const initialAmount = usesWholeUnits ? Math.round(Number(session.amount)) : session.amount;
+        setAmount(String(initialAmount));
+      } else {
+        setAmount('');
+      }
     }
-  }, [session?.sessionId, session?.amount, session?.currency, usesWholeUnits]);
+  }, [session?.sessionId, session?.amount, session?.currency, usesWholeUnits, location.state?.restoreAmount]);
 
   async function continueToCard(event) {
     event.preventDefault();
@@ -51,18 +55,6 @@ export default function AmountPage() {
     }
   }
 
-  async function cancelCheckout() {
-    setBusy(true);
-    setError('');
-    try {
-      const result = await processPayment({ sessionId, action: 'cancel' });
-      navigate('/result/' + result.payment.paymentId);
-    } catch (requestError) {
-      setError(requestError.message);
-      setBusy(false);
-    }
-  }
-
   if (loading) return <LoadingScreen message="Preparing your secure checkout…" />;
   if (sessionError) return <div className="panel error-panel" role="alert">{sessionError}</div>;
   if (!session) return null;
@@ -76,28 +68,22 @@ export default function AmountPage() {
   }
 
   return (
-    <section className="panel">
-      <div className="step-heading">
-        <span className="step-number">01</span>
-        <div>
-          <p className="eyebrow">TOP-UP AMOUNT</p>
-          <h1>Enter your amount</h1>
-          <p className="muted">You can edit the amount before continuing.</p>
+    <section className="amount-entry-panel">
+      <form onSubmit={continueToCard} className="form-stack amount-entry-form">
+        <div className="amount-entry-heading">
+          <label className="field-label" htmlFor="amount">Amount</label>
         </div>
-      </div>
-
-      <form onSubmit={continueToCard} className="form-stack">
-        <label className="field-label" htmlFor="amount">Amount in {session.currency}</label>
         <div className="amount-input-wrap">
-          <span>{session.currency}</span>
           <input
             id="amount"
             name="amount"
+            aria-label={'Amount in ' + session.currency}
             type={usesWholeUnits ? 'text' : 'number'}
             inputMode={usesWholeUnits ? 'numeric' : 'decimal'}
             min={usesWholeUnits ? '1' : '0.01'}
             max="1000000"
             step={usesWholeUnits ? '1' : '0.01'}
+            placeholder="Enter amount"
             value={amount}
             onChange={(event) => {
               const nextAmount = event.target.value;
@@ -110,16 +96,12 @@ export default function AmountPage() {
             }}
             required
           />
-          {usesWholeUnits && <span className="amount-fixed-decimals" aria-hidden="true">.00</span>}
         </div>
-        <p className="field-hint">Final amount: {formatMoney(Number(amount), session.currency)}</p>
+        <p className="amount-entry-help">Add money to your VPay card in whole rupees.</p>
         {error && <p className="form-error" role="alert">{error}</p>}
-        <PrimaryButton type="submit" disabled={busy || session.status !== 'PENDING'}>
-          {busy ? 'Saving amount…' : 'Continue'}
+        <PrimaryButton className="amount-pay-button" type="submit" disabled={busy || session.status !== 'PENDING'}>
+          {busy ? 'Saving amount…' : 'Continue to Rupio'}
         </PrimaryButton>
-        <button className="cancel-button" type="button" onClick={cancelCheckout} disabled={busy}>
-          Cancel payment
-        </button>
       </form>
     </section>
   );

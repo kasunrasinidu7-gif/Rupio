@@ -26,7 +26,11 @@ export default function AmountConfirmationPage() {
         <span>Amount</span>
         <strong>{formatMoney(session.amount, session.currency)}</strong>
       </div>
-      <Link className="edit-amount-link" to={'/checkout/' + sessionId}>Edit amount</Link>
+      {session.environment === 'test' ? (
+        <Link className="edit-amount-link" to={'/checkout/' + sessionId} state={{ restoreAmount: true }}>Edit amount</Link>
+      ) : session.editAmountUrl ? (
+        <a className="edit-amount-link" href={session.editAmountUrl}>Edit amount</a>
+      ) : null}
       <PrimaryButton type="button" onClick={() => navigate('/checkout/' + sessionId + '/card')}>
         Confirm
       </PrimaryButton>

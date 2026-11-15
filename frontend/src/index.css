@@ -277,6 +277,14 @@ body { background: #f4f5f6; color: #18344d; }
 .confirmation-panel > .primary-button { display: flex; width: 150px; min-height: 46px; margin: 0 auto; }
 .confirmation-checkout-wrap { width: min(100% - 40px, 540px); max-width: 540px; }
 .confirmation-toolbar { max-width: 100%; }
+.amount-entry-panel { width: min(100%, 540px); min-height: 0 !important; margin-inline: auto; padding: 30px; }
+.amount-entry-form { gap: 18px; }
+.amount-entry-form > .field-label { margin: 0; color: #1c2730; font-size: 18px; font-weight: 500; }
+.amount-entry-panel .amount-input-wrap { height: 62px; border-radius: 15px; }
+.amount-entry-panel .amount-input-wrap input,
+.amount-entry-panel .amount-fixed-decimals { font-size: 24px; }
+.amount-pay-button { min-height: 60px; margin-top: 8px; border-radius: 14px; font-size: 18px; font-weight: 500; }
+.amount-cancel-button { margin-top: 0; color: #315b77; font-size: 14px; }
 .payment-method-choice { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border: 1px solid #cbd4dc; border-radius: 8px; background: #f8fafb; }
 .payment-method-choice > span:nth-child(2) { display: grid; gap: 3px; }
 .payment-method-choice strong { color: #29495f; font-size: 12px; font-weight: 650; }
@@ -302,6 +310,11 @@ body { background: #f4f5f6; color: #18344d; }
 
 @media (max-width: 420px) {
   .confirmation-checkout-wrap { width: calc(100% - 20px); }
+  .amount-entry-panel { padding: 28px 16px !important; }
+  .amount-entry-form { gap: 16px; }
+  .amount-entry-form > .field-label { font-size: 17px; }
+  .amount-entry-panel .amount-input-wrap { height: 60px; }
+  .amount-pay-button { min-height: 58px; font-size: 17px; }
   .confirmation-panel { padding: 22px 18px !important; }
   .confirmation-amount strong { font-size: 22px; }
   .payment-method-choice { padding: 11px; }
@@ -394,4 +407,38 @@ body { background: #f4f5f6; color: #18344d; }
 .otp-checkout-wrap { width: min(100% - 40px, 500px); max-width: 500px; }
 @media (max-width: 420px) {
   .otp-checkout-wrap { width: calc(100% - 20px); }
+}
+
+/* VPay-style top-up amount entry screen. */
+.amount-app-shell { display: flex; min-height: 100vh; min-height: 100dvh; flex-direction: column; background: #fff; }
+.topup-app-bar { display: flex; height: 88px; flex: 0 0 88px; align-items: center; gap: 20px; padding: 0 28px; border-bottom: 8px solid #f0f0f0; background: #fff; }
+.topup-back-button { display: grid; width: 40px; height: 44px; flex: 0 0 40px; place-items: center; padding: 0; border: 0; color: #202124; background: transparent; cursor: pointer; }
+.topup-back-button svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.4; }
+.topup-app-bar h1 { margin: 0; color: #202124; font-size: 28px; font-weight: 700; }
+.topup-timer { margin-left: auto; color: #1475ad; font-size: 12px; font-variant-numeric: tabular-nums; }
+.amount-screen-wrap { display: flex; width: 100%; max-width: none; flex: 1; flex-direction: column; margin: 0; padding: 50px 5.2vw 20px; }
+.amount-screen-wrap .amount-step-grid { display: grid; width: 100%; max-width: 960px; flex: 1; margin: 0 auto; }
+.amount-screen-wrap .checkout-main { display: flex; flex-direction: column; }
+.amount-entry-panel { display: flex; width: 100%; flex: 1; flex-direction: column; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.amount-entry-form { display: flex; min-height: 100%; flex: 1; flex-direction: column; gap: 0; }
+.amount-entry-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 34px; }
+.amount-entry-form > .field-label { margin: 0; color: #252525; font-size: 23px; font-weight: 600; }
+.amount-entry-panel .amount-input-wrap { height: 56px; gap: 8px; padding: 0 18px; border: 2px solid #85818a; border-radius: 20px; background: #fff; }
+.amount-entry-panel .amount-input-wrap input { padding-left: 6px; color: #45424a; font-size: 20px; font-weight: 400; }
+.amount-entry-help { margin: 22px 0 0; color: #777; font-size: 17px; line-height: 1.5; }
+.amount-pay-button { min-height: 54px; margin-top: auto; margin-bottom: env(safe-area-inset-bottom, 0px); border-radius: 18px; background: #0874d7; font-size: 17px; font-weight: 600; }
+
+@media (max-width: 600px) {
+  .topup-app-bar { height: 72px; flex-basis: 72px; gap: 13px; padding: 0 18px; border-bottom-width: 6px; }
+  .topup-back-button { width: 34px; flex-basis: 34px; }
+  .topup-back-button svg { width: 27px; height: 27px; }
+  .topup-app-bar h1 { font-size: 26px; }
+  .topup-timer { font-size: 11px; }
+  .amount-screen-wrap { padding: 50px 20px 14px; }
+  .amount-entry-heading { margin-bottom: 28px; }
+  .amount-entry-form > .field-label { font-size: 22px; }
+  .amount-entry-panel .amount-input-wrap { height: 54px; padding: 0 15px; border-radius: 18px; }
+  .amount-entry-panel .amount-input-wrap input { font-size: 19px; }
+  .amount-entry-help { margin-top: 18px; font-size: 15px; }
+  .amount-pay-button { min-height: 52px; border-radius: 16px; font-size: 16px; }
 }

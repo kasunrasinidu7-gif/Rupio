@@ -15,6 +15,7 @@ function CheckoutFrame() {
   const isAmountStep = /\/(?:mockpay\/)?checkout\/[^/]+$/.test(location.pathname);
   const isConfirmationStep = /\/(?:mockpay\/)?checkout\/[^/]+\/confirm$/.test(location.pathname);
   const isOtpStep = /\/(?:mockpay\/)?checkout\/[^/]+\/otp$/.test(location.pathname);
+  const bypassAmountEntry = isAmountStep && !loading && session?.status === 'PENDING' && session.environment !== 'test';
   const timerActive = !loading && session?.status === 'PENDING' && isStep;
   const countdown = useCountdown(location.pathname, timerActive);
   const timeoutStarted = useRef(false);
@@ -36,6 +37,13 @@ function CheckoutFrame() {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (bypassAmountEntry) {
+      const checkoutPath = location.pathname.startsWith('/mockpay/') ? '/mockpay/checkout/' : '/checkout/';
+      navigate(checkoutPath + encodeURIComponent(sessionId) + '/confirm', { replace: true });
+    }
+  }, [bypassAmountEntry, location.pathname, navigate, sessionId]);
+
+  useEffect(() => {
     if (!timerActive || countdown.seconds > 0 || timeoutStarted.current) return;
     timeoutStarted.current = true;
     processPayment({ sessionId, action: 'timeout' })
@@ -46,29 +54,39 @@ function CheckoutFrame() {
       });
   }, [countdown.seconds, navigate, sessionId, timerActive]);
 
-  if (loading || transitioning) {
+  if (loading || transitioning || bypassAmountEntry) {
     return <LoadingScreen message={loading ? 'Preparing your secure checkout…' : 'Loading the next payment step…'} />;
   }
 
   return (
-    <div className="app-shell">
-      <BrandHeader />
-      <main className={isOtpStep ? 'checkout-wrap otp-checkout-wrap' : isConfirmationStep ? 'checkout-wrap confirmation-checkout-wrap' : 'checkout-wrap'}>
-        <div className={isAmountStep ? 'checkout-toolbar amount-toolbar' : isOtpStep ? 'checkout-toolbar otp-toolbar' : isConfirmationStep ? 'checkout-toolbar confirmation-toolbar' : 'checkout-toolbar'}>
-          <span>Secure checkout</span>
-          {session?.status === 'PENDING' && (
-            <strong className={countdown.seconds < 30 ? 'timer timer-warning' : 'timer'}>
-              {countdown.label} remaining
-            </strong>
-          )}
-        </div>
+    <div className={isAmountStep ? 'app-shell amount-app-shell' : 'app-shell'}>
+      {isAmountStep ? (
+        <header className="topup-app-bar">
+          <button className="topup-back-button" type="button" aria-label="Go back" onClick={() => window.history.back()}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7" /></svg>
+          </button>
+          <h1>Top Up</h1>
+          {session?.status === 'PENDING' && <strong className={countdown.seconds < 30 ? 'topup-timer timer-warning' : 'topup-timer'}>{countdown.label} left</strong>}
+        </header>
+      ) : <BrandHeader />}
+      <main className={isAmountStep ? 'checkout-wrap amount-screen-wrap' : isOtpStep ? 'checkout-wrap otp-checkout-wrap' : isConfirmationStep ? 'checkout-wrap confirmation-checkout-wrap' : 'checkout-wrap'}>
+        {!isAmountStep && (
+          <div className={isOtpStep ? 'checkout-toolbar otp-toolbar' : isConfirmationStep ? 'checkout-toolbar confirmation-toolbar' : 'checkout-toolbar'}>
+            <span>Secure checkout</span>
+            {session?.status === 'PENDING' && (
+              <strong className={countdown.seconds < 30 ? 'timer timer-warning' : 'timer'}>
+                {countdown.label} remaining
+              </strong>
+            )}
+          </div>
+        )}
         <div className={isOtpStep ? 'checkout-grid otp-step-grid' : isAmountStep ? 'checkout-grid amount-step-grid' : 'checkout-grid'}>
           <div className="checkout-main">
             {timeoutError && <p className="form-error" role="alert">{timeoutError}</p>}
             <Outlet />
           </div>
         </div>
-        <p className="footer-note">Rupio is a simulated gateway. No real money is charged.</p>
+        {!isAmountStep && <p className="footer-note">Rupio is a simulated gateway. No real money is charged.</p>}
       </main>
     </div>
   );

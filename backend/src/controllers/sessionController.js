@@ -1,11 +1,12 @@
 import { createSession, findSession, finalizeSession, updateSessionAmount } from '../models/paymentSessionModel.js';
 import { sendIntegrationCallback } from '../utils/callback.js';
 import { httpError } from '../utils/errors.js';
-import { parseAmount, parseCallbackUrl, parseCurrency, parseReturnUrl } from '../utils/validation.js';
+import { parseAmount, parseCallbackUrl, parseCurrency, parseEditAmountUrl, parseReturnUrl } from '../utils/validation.js';
 
 function publicSession(session) {
   return {
     sessionId: session.sessionId,
+    environment: session.environment || (session.callbackUrl?.includes('/test/callback') ? 'test' : 'live'),
     clientReference: session.clientReference,
     requestedAmount: session.requestedAmount,
     amount: session.amount,
@@ -14,6 +15,7 @@ function publicSession(session) {
     paymentId: session.paymentId,
     resultMessage: session.resultMessage,
     returnUrl: session.returnUrl,
+    editAmountUrl: session.editAmountUrl || null,
     callbackDelivery: session.callbackDelivery,
     createdAt: session.createdAt,
     expiresAt: session.expiresAt
@@ -30,7 +32,7 @@ async function expireIfNeeded(session) {
   return result.session;
 }
 
-async function buildCheckoutSession(body) {
+async function buildCheckoutSession(body, environment = 'live') {
   if (!process.env.RUPIO_CALLBACK_SECRET) {
     throw httpError(503, 'Rupio callback signing is not configured.');
   }
@@ -45,8 +47,10 @@ async function buildCheckoutSession(body) {
     customerReference: body.customerReference ? String(body.customerReference).slice(0, 120) : null,
     amount: parseAmount(body.amount, currency),
     currency,
+    environment,
     callbackUrl: parseCallbackUrl(body.callbackUrl),
-    returnUrl: parseReturnUrl(body.returnUrl)
+    returnUrl: parseReturnUrl(body.returnUrl),
+    editAmountUrl: parseEditAmountUrl(body.editAmountUrl)
   });
   const baseUrl = (process.env.RUPIO_PUBLIC_URL || 'http://localhost:5173').replace(/\/+$/, '');
 
@@ -58,7 +62,7 @@ async function buildCheckoutSession(body) {
 }
 
 export async function createCheckoutSession(request, response) {
-  const result = await buildCheckoutSession(request.body || {});
+  const result = await buildCheckoutSession(request.body || {}, 'live');
   return response.status(201).json(result);
 }
 
@@ -67,7 +71,7 @@ export async function createTestCheckoutSession(request, response) {
   const result = await buildCheckoutSession({
     ...(request.body || {}),
     callbackUrl: 'http://127.0.0.1:' + port + '/api/v1/test/callback'
-  });
+  }, 'test');
   return response.status(201).json(result);
 }
 

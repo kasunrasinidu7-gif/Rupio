@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { processPayment } from '../api/rupioApi.js';
 import LoadingScreen from '../components/LoadingScreen.jsx';
-import PaymentStatus from '../components/PaymentStatus.jsx';
 import PrimaryButton from '../components/PrimaryButton.jsx';
 import { useCheckout } from '../context/CheckoutContext.jsx';
 
@@ -47,17 +46,19 @@ export default function OtpPage() {
     }
   }
 
+  useEffect(() => {
+    if (session?.status !== 'PENDING' && session?.paymentId) {
+      navigate('/result/' + session.paymentId, { replace: true });
+    }
+  }, [navigate, session?.paymentId, session?.status]);
+
   if (loading) return <LoadingScreen message="Preparing verification…" />;
   if (sessionError) return <div className="panel error-panel" role="alert">{sessionError}</div>;
   if (!session) return null;
   if (session.status !== 'PENDING' && session.paymentId) {
-    return (
-      <div className="panel">
-        <PaymentStatus status={session.status} message={session.resultMessage} />
-        <Link className="text-link" to={'/result/' + session.paymentId}>View payment result</Link>
-      </div>
-    );
+    return <LoadingScreen message="Loading your payment result..." />;
   }
+  if (busy) return <LoadingScreen message="Processing your payment..." />;
   if (!cardDetails) {
     return (
       <section className="panel">
