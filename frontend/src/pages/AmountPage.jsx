@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { updateAmount } from '../api/rupioApi.js';
 import LoadingScreen from '../components/LoadingScreen.jsx';
@@ -14,6 +14,7 @@ export default function AmountPage() {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const submitLock = useRef(false);
   const usesWholeUnits = session?.currency === 'LKR';
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export default function AmountPage() {
 
   async function continueToCard(event) {
     event.preventDefault();
+    if (submitLock.current) return;
     setError('');
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
@@ -43,6 +45,7 @@ export default function AmountPage() {
       setError('Enter a whole amount in LKR; cents are not accepted.');
       return;
     }
+    submitLock.current = true;
     setBusy(true);
     try {
       await updateAmount(sessionId, numericAmount);
@@ -50,7 +53,7 @@ export default function AmountPage() {
       navigate('/checkout/' + sessionId + '/confirm');
     } catch (requestError) {
       setError(requestError.message);
-    } finally {
+      submitLock.current = false;
       setBusy(false);
     }
   }

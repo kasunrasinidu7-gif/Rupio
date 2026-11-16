@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import BrandHeader from '../components/BrandHeader.jsx';
 import { createTestSession } from '../api/rupioApi.js';
 
 export default function TestPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const startLock = useRef(false);
 
   async function startCheckout() {
+    if (startLock.current) return;
+    startLock.current = true;
     setError('');
     setLoading(true);
     try {
@@ -19,6 +22,7 @@ export default function TestPage() {
       window.location.assign(session.checkoutUrl);
     } catch (requestError) {
       setError(requestError.message);
+      startLock.current = false;
       setLoading(false);
     }
   }

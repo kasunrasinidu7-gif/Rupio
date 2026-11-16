@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { processPayment } from '../api/rupioApi.js';
 import AmountSummary from '../components/AmountSummary.jsx';
@@ -30,9 +30,11 @@ export default function CardPage() {
   const [error, setError] = useState('');
   const [cardNumberError, setCardNumberError] = useState('');
   const [busy, setBusy] = useState(false);
+  const actionLock = useRef(false);
 
   function continueToOtp(event) {
     event.preventDefault();
+    if (actionLock.current) return;
     const digits = cardNumber.replace(/\D/g, '');
     if (digits.length !== 16) {
       setCardNumberError('Enter a 16-digit card number.');
@@ -43,6 +45,7 @@ export default function CardPage() {
       return;
     }
     setCardNumberError('');
+    actionLock.current = true;
     setBusy(true);
     setError('');
     navigate('/checkout/' + sessionId + '/otp', {
@@ -51,6 +54,8 @@ export default function CardPage() {
   }
 
   async function cancelCheckout() {
+    if (actionLock.current) return;
+    actionLock.current = true;
     setBusy(true);
     setError('');
     try {
@@ -58,6 +63,7 @@ export default function CardPage() {
       navigate('/result/' + result.payment.paymentId);
     } catch (requestError) {
       setError(requestError.message);
+      actionLock.current = false;
       setBusy(false);
     }
   }
@@ -169,9 +175,11 @@ export default function CardPage() {
               id="cvv"
               autoComplete="cc-csc"
               inputMode="numeric"
-              maxLength="4"
+              maxLength="3"
+              pattern="[0-9]{3}"
+              title="Enter exactly 3 digits."
               value={cvv}
-              onChange={(event) => setCvv(event.target.value.replace(/\D/g, '').slice(0, 4))}
+              onChange={(event) => setCvv(event.target.value.replace(/\D/g, '').slice(0, 3))}
               required
             />
             <CardSecurityGuide />

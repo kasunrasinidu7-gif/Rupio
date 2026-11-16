@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useCheckout } from '../context/CheckoutContext.jsx';
 import { formatMoney } from '../utils/format.js';
@@ -9,6 +10,15 @@ export default function AmountConfirmationPage() {
   const { session, loading, error } = useCheckout();
   const { sessionId } = useParams();
   const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
+  const actionLock = useRef(false);
+
+  function continueToCard() {
+    if (actionLock.current) return;
+    actionLock.current = true;
+    setBusy(true);
+    navigate('/checkout/' + sessionId + '/card');
+  }
 
   if (loading) return <LoadingScreen message="Loading amount confirmation…" />;
   if (error) return <section className="panel error-panel" role="alert">{error}</section>;
@@ -31,8 +41,8 @@ export default function AmountConfirmationPage() {
       ) : session.editAmountUrl ? (
         <a className="edit-amount-link" href={session.editAmountUrl}>Edit amount</a>
       ) : null}
-      <PrimaryButton type="button" onClick={() => navigate('/checkout/' + sessionId + '/card')}>
-        Confirm
+      <PrimaryButton type="button" onClick={continueToCard} disabled={busy}>
+        {busy ? 'Please wait…' : 'Confirm'}
       </PrimaryButton>
     </section>
   );
