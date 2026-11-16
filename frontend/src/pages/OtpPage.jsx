@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { processPayment } from '../api/rupioApi.js';
 import LoadingScreen from '../components/LoadingScreen.jsx';
@@ -14,9 +14,12 @@ export default function OtpPage() {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const actionLock = useRef(false);
 
   async function confirmOtp(event) {
     event.preventDefault();
+    if (actionLock.current) return;
+    actionLock.current = true;
     setBusy(true);
     setError('');
     try {
@@ -30,11 +33,14 @@ export default function OtpPage() {
       navigate('/result/' + result.payment.paymentId);
     } catch (requestError) {
       setError(requestError.message);
+      actionLock.current = false;
       setBusy(false);
     }
   }
 
   async function cancelCheckout() {
+    if (actionLock.current) return;
+    actionLock.current = true;
     setBusy(true);
     setError('');
     try {
@@ -42,6 +48,7 @@ export default function OtpPage() {
       navigate('/result/' + result.payment.paymentId);
     } catch (requestError) {
       setError(requestError.message);
+      actionLock.current = false;
       setBusy(false);
     }
   }

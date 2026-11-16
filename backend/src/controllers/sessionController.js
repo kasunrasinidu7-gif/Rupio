@@ -75,6 +75,35 @@ export async function createTestCheckoutSession(request, response) {
   return response.status(201).json(result);
 }
 
+export async function retryCheckoutSession(request, response) {
+  const session = await findSession(request.params.sessionId);
+  if (!session) throw httpError(404, 'Checkout session was not found.');
+  if (!['FAILED', 'DECLINED', 'TIMEOUT'].includes(session.status)) {
+    throw httpError(409, 'This payment cannot be retried.');
+  }
+  if (!session.callbackUrl || !process.env.RUPIO_CALLBACK_SECRET) {
+    throw httpError(503, 'The payment service is temporarily unavailable.');
+  }
+
+  const retrySession = await createSession({
+    clientReference: session.clientReference,
+    customerReference: session.customerReference,
+    amount: session.amount,
+    currency: session.currency,
+    environment: session.environment,
+    callbackUrl: session.callbackUrl,
+    returnUrl: session.returnUrl,
+    editAmountUrl: session.editAmountUrl
+  });
+  const baseUrl = (process.env.RUPIO_PUBLIC_URL || 'http://localhost:5173').replace(/\/+$/, '');
+
+  return response.status(201).json({
+    sessionId: retrySession.sessionId,
+    checkoutUrl: baseUrl + '/checkout/' + retrySession.sessionId,
+    expiresAt: retrySession.expiresAt
+  });
+}
+
 export async function getCheckoutSession(request, response) {
   const session = await findSession(request.params.sessionId);
   if (!session) throw httpError(404, 'Checkout session was not found.');

@@ -17,7 +17,7 @@ export function getTestCardOutcome(cardNumber, expiry, cvv) {
   if (lastDay < new Date(new Date().getFullYear(), new Date().getMonth(), 1)) {
     throw httpError(400, 'The test card expiry must be in the future.');
   }
-  if (!/^\d{3,4}$/.test(String(cvv || ''))) throw httpError(400, 'Enter a three- or four-digit test CVV.');
+  if (!/^\d{3}$/.test(String(cvv || ''))) throw httpError(400, 'Enter exactly three digits for the card security code.');
 
   if (digits === '4242424242424242') {
     return { status: 'SUCCESS', message: 'Test payment approved.' };
